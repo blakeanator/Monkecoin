@@ -1,6 +1,6 @@
 Bitcoin Core version 0.16.3 is now available from:
 
-  <https://bitcoincore.org/bin/bitcoin-core-0.16.3/>
+  <https://monkecoincore.org/bin/monkecoin-core-0.16.3/>
 
 This is a new minor version release, with various bugfixes.
 
@@ -10,15 +10,15 @@ Please report bugs using the issue tracker at GitHub:
 
 To receive security and update notifications, please subscribe to:
 
-  <https://bitcoincore.org/en/list/announcements/join/>
+  <https://monkecoincore.org/en/list/announcements/join/>
 
 How to Upgrade
 ==============
 
 If you are running an older version, shut it down. Wait until it has completely
 shut down (which might take a few minutes for older versions), then run the
-installer (on Windows) or just copy over `/Applications/Bitcoin-Qt` (on Mac)
-or `bitcoind`/`bitcoin-qt` (on Linux).
+installer (on Windows) or just copy over `/Applications/Monkecoin-Qt` (on Mac)
+or `monkecoind`/`monkecoin-qt` (on Linux).
 
 The first time you run version 0.15.0 or newer, your chainstate database will be converted to a
 new format, which will take anywhere from a few minutes to half an hour,
@@ -65,7 +65,7 @@ to upgrade any of the vulnerable versions to 0.16.3 as soon as possible.
 - #13547 `212ef1f` Make `signrawtransaction*` give an error when amount is needed but missing (ajtowns)
 
 ### Miscellaneous
-- #13655 `1cdbea7` bitcoinconsensus: invalid flags error should be set to `bitcoinconsensus_err` (afk11)
+- #13655 `1cdbea7` monkecoinconsensus: invalid flags error should be set to `monkecoinconsensus_err` (afk11)
 
 ### Documentation
 - #13844 `11b9dbb` correct the help output for -prune (hebasto)

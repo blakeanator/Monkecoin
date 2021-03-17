@@ -1,13 +1,13 @@
 <!-- This issue tracker is only for technical issues related to Bitcoin Core.
 
-General bitcoin questions and/or support requests are best directed to the Bitcoin StackExchange at https://bitcoin.stackexchange.com.
+General monkecoin questions and/or support requests are best directed to the Monkecoin StackExchange at https://monkecoin.stackexchange.com.
 
-For reporting security issues, please read instructions at https://bitcoincore.org/en/contact/.
+For reporting security issues, please read instructions at https://monkecoincore.org/en/contact/.
 
 If the node is "stuck" during sync or giving "block checksum mismatch" errors, please ensure your hardware is stable by running memtest and observe CPU temperature with a load-test tool such as linpack before creating an issue!
 
 Any report, issue or feature request related to the GUI should be reported at
-https://github.com/bitcoin-core/gui/issues/
+https://github.com/monkecoin-core/gui/issues/
 -->
 
 <!-- Describe the issue -->

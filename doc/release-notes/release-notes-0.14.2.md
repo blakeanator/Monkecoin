@@ -1,6 +1,6 @@
 Bitcoin Core version 0.14.2 is now available from:
 
-  <https://bitcoin.org/bin/bitcoin-core-0.14.2/>
+  <https://monkecoin.org/bin/monkecoin-core-0.14.2/>
 
 This is a new minor version release, including various bugfixes and
 performance improvements, as well as updated translations.
@@ -11,7 +11,7 @@ Please report bugs using the issue tracker at github:
 
 To receive security and update notifications, please subscribe to:
 
-  <https://bitcoincore.org/en/list/announcements/join/>
+  <https://monkecoincore.org/en/list/announcements/join/>
 
 Compatibility
 ==============
@@ -48,7 +48,7 @@ possible.
 Known Bugs
 ==========
 
-Since 0.14.0 the approximate transaction fee shown in Bitcoin-Qt when using coin
+Since 0.14.0 the approximate transaction fee shown in Monkecoin-Qt when using coin
 control and smart fee estimation does not reflect any change in target from the
 smart fee slider. It will only present an approximate fee calculated using the
 default target. The fee calculated using the correct target is still applied to
@@ -71,7 +71,7 @@ git merge commit are mentioned.
 
 ### Build system
 - #10414 `ffb0c4b` miniupnpc 2.0.20170509 (fanquake)
-- #10228 `ae479bc` Regenerate bitcoin-config.h as necessary (theuni)
+- #10228 `ae479bc` Regenerate monkecoin-config.h as necessary (theuni)
 
 ### Miscellaneous
 - #10245 `44a17f2` Minor fix in build documentation for FreeBSD 11 (shigeya)
@@ -98,5 +98,5 @@ Thanks to everyone who directly contributed to this release:
 - Shigeya Suzuki
 - Wladimir J. van der Laan
 
-As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/bitcoin/).
+As well as everyone that helped translating on [Transifex](https://www.transifex.com/projects/p/monkecoin/).
 

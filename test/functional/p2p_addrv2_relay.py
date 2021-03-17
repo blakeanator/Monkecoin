@@ -15,7 +15,7 @@ from test_framework.messages import (
     NODE_WITNESS,
 )
 from test_framework.p2p import P2PInterface
-from test_framework.test_framework import BitcoinTestFramework
+from test_framework.test_framework import MonkecoinTestFramework
 from test_framework.util import assert_equal
 
 ADDRS = []
@@ -24,7 +24,7 @@ for i in range(10):
     addr.time = int(time.time()) + i
     addr.nServices = NODE_NETWORK | NODE_WITNESS
     addr.ip = "123.123.123.{}".format(i % 256)
-    addr.port = 8333 + i
+    addr.port = 1165 + i
     ADDRS.append(addr)
 
 
@@ -38,14 +38,14 @@ class AddrReceiver(P2PInterface):
         for addr in message.addrs:
             assert_equal(addr.nServices, 9)
             assert addr.ip.startswith('123.123.123.')
-            assert (8333 <= addr.port < 8343)
+            assert (1165 <= addr.port < 1175)
         self.addrv2_received_and_checked = True
 
     def wait_for_addrv2(self):
         self.wait_until(lambda: "addrv2" in self.last_message)
 
 
-class AddrTest(BitcoinTestFramework):
+class AddrTest(MonkecoinTestFramework):
     def set_test_params(self):
         self.setup_clean_chain = True
         self.num_nodes = 1

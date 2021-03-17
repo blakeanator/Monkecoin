@@ -48,7 +48,7 @@ struct BlockAndHeaderTipInfo
     double verification_progress;
 };
 
-//! Top-level interface for a bitcoin node (bitcoind process).
+//! Top-level interface for a monkecoin node (monkecoind process).
 class Node
 {
 public:

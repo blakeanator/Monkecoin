@@ -1,0 +1,10 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Monkecoin Core consensus library
+Description: Library for the Monkecoin consensus protocol.
+Version: 0.21.0
+Libs: -L${libdir} -lmonkecoinconsensus
+Cflags: -I${includedir}

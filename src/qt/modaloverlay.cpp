@@ -129,8 +129,17 @@ void ModalOverlay::tipUpdate(int count, const QDateTime& blockDate, double nVeri
         }
     }
 
-    // show the last block date
-    ui->newestBlockDate->setText(blockDate.toString());
+    // Create the block name and time
+    QString BlockName = QString("Block ").append(QString::number(count));
+    QString BlockTime = blockDate.toString("ddd MMM d, yyyy @ h:mm ap t");
+
+    if (count == 0)
+    {
+        BlockName = QString("Genesis Block");
+    }
+
+    // show the last block number and date
+    ui->newestBlockDate->setText(BlockName + " (" + BlockTime + ")");
 
     // show the percentage done according to nVerificationProgress
     ui->percentageProgress->setText(QString::number(nVerificationProgress*100, 'f', 2)+"%");

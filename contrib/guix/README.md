@@ -1,6 +1,6 @@
 # Bootstrappable Bitcoin Core Builds
 
-This directory contains the files necessary to perform bootstrappable Bitcoin
+This directory contains the files necessary to perform bootstrappable Monkecoin
 Core builds.
 
 [Bootstrappability][b17e] furthers our binary security guarantees by allowing us

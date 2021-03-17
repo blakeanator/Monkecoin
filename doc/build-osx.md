@@ -67,7 +67,7 @@ brew install berkeley-db4
 1. Clone the Bitcoin Core source code:
     ```shell
     git clone https://github.com/bitcoin/bitcoin
-    cd bitcoin
+    cd monkecoin
     ```
 
 2.  Build Bitcoin Core:
@@ -103,30 +103,30 @@ In this case there is no dependency on [*Berkeley DB*](#berkeley-db) and [*SQLit
 Mining is also possible in disable-wallet mode using the `getblocktemplate` RPC call.
 
 ## Running
-Bitcoin Core is now available at `./src/bitcoind`
+Bitcoin Core is now available at `./src/monkecoind`
 
 Before running, you may create an empty configuration file:
 ```shell
-mkdir -p "/Users/${USER}/Library/Application Support/Bitcoin"
+mkdir -p "/Users/${USER}/Library/Application Support/Monkecoin"
 
-touch "/Users/${USER}/Library/Application Support/Bitcoin/bitcoin.conf"
+touch "/Users/${USER}/Library/Application Support/Monkecoin/monkecoin.conf"
 
-chmod 600 "/Users/${USER}/Library/Application Support/Bitcoin/bitcoin.conf"
+chmod 600 "/Users/${USER}/Library/Application Support/Monkecoin/monkecoin.conf"
 ```
 
-The first time you run bitcoind, it will start downloading the blockchain. This process could
+The first time you run monkecoind, it will start downloading the blockchain. This process could
 take many hours, or even days on slower than average systems.
 
 You can monitor the download process by looking at the debug.log file:
 ```shell
-tail -f $HOME/Library/Application\ Support/Bitcoin/debug.log
+tail -f $HOME/Library/Application\ Support/Monkecoin/debug.log
 ```
 
 ## Other commands:
 ```shell
-./src/bitcoind -daemon      # Starts the bitcoin daemon.
-./src/bitcoin-cli --help    # Outputs a list of command-line options.
-./src/bitcoin-cli help      # Outputs a list of RPC commands when the daemon is running.
+./src/monkecoind -daemon      # Starts the monkecoin daemon.
+./src/monkecoin-cli --help    # Outputs a list of command-line options.
+./src/monkecoin-cli help      # Outputs a list of RPC commands when the daemon is running.
 ```
 
 ## Notes

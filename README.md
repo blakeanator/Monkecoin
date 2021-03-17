@@ -1,20 +1,20 @@
 Bitcoin Core integration/staging tree
 =====================================
 
-https://bitcoincore.org
+https://monkecoin.org
 
-What is Bitcoin?
+What is Monkecoin?
 ----------------
 
-Bitcoin is an experimental digital currency that enables instant payments to
-anyone, anywhere in the world. Bitcoin uses peer-to-peer technology to operate
+Monkecoin is an experimental digital currency that enables instant payments to
+anyone, anywhere in the world. Monkecoin uses peer-to-peer technology to operate
 with no central authority: managing transactions and issuing money are carried
 out collectively by the network. Bitcoin Core is the name of open source
 software which enables the use of this currency.
 
 For more information, as well as an immediately usable, binary version of
-the Bitcoin Core software, see https://bitcoincore.org/en/download/, or read the
-[original whitepaper](https://bitcoincore.org/bitcoin.pdf).
+the Bitcoin Core software, see https://monkecoin.org/en/download/, or read the
+[original whitepaper](https://monkecoin.org/monkecoin.pdf).
 
 License
 -------
@@ -29,7 +29,7 @@ The `master` branch is regularly built (see `doc/build-*.md` for instructions) a
 completely stable. [Tags](https://github.com/bitcoin/bitcoin/tags) are created
 regularly from release branches to indicate new official, stable release versions of Bitcoin Core.
 
-The https://github.com/bitcoin-core/gui repository is used exclusively for the
+The https://github.com/monkecoin-core/gui repository is used exclusively for the
 development of the GUI. Its master branch is identical in all monotree
 repositories. Release branches and tags do not exist, so please do not fork
 that repository unless it is for development reasons.
@@ -77,4 +77,4 @@ Translations are periodically pulled from Transifex and merged into the git repo
 **Important**: We do not accept translation changes as GitHub pull requests because the next
 pull from Transifex would automatically overwrite them again.
 
-Translators should also subscribe to the [mailing list](https://groups.google.com/forum/#!forum/bitcoin-translators).
+Translators should also subscribe to the [mailing list](https://groups.google.com/forum/#!forum/monkecoin-translators).

@@ -1,7 +1,7 @@
 # It is not recommended to modify this file in-place, because it will
 # be overwritten during package upgrades. If you want to add further
 # options or overwrite existing ones then use
-# $ systemctl edit bitcoind.service
+# $ systemctl edit monkecoind.service
 # See "man systemd.service" for details.
 
 # Note that almost all daemon options could be specified in
@@ -10,44 +10,44 @@
 # config file.
 
 [Unit]
-Description=Bitcoin daemon
+Description=Monkecoin daemon
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/bitcoind -daemon \
-                            -pid=/run/bitcoind/bitcoind.pid \
+ExecStart=/usr/bin/monkecoind -daemon \
+                            -pid=/run/monkecoind/monkecoind.pid \
                             -conf=/etc/bitcoin/bitcoin.conf \
-                            -datadir=/var/lib/bitcoind
+                            -datadir=/var/lib/monkecoind
 
 # Make sure the config directory is readable by the service user
 PermissionsStartOnly=true
-ExecStartPre=/bin/chgrp bitcoin /etc/bitcoin
+ExecStartPre=/bin/chgrp monkecoin /etc/monkecoin
 
 # Process management
 ####################
 
 Type=forking
-PIDFile=/run/bitcoind/bitcoind.pid
+PIDFile=/run/monkecoind/monkecoind.pid
 Restart=on-failure
 TimeoutStopSec=600
 
 # Directory creation and permissions
 ####################################
 
-# Run as bitcoin:bitcoin
-User=bitcoin
-Group=bitcoin
+# Run as monkecoin:monkecoin
+User=monkecoin
+Group=monkecoin
 
-# /run/bitcoind
-RuntimeDirectory=bitcoind
+# /run/monkecoind
+RuntimeDirectory=monkecoind
 RuntimeDirectoryMode=0710
 
-# /etc/bitcoin
-ConfigurationDirectory=bitcoin
+# /etc/monkecoin
+ConfigurationDirectory=monkecoin
 ConfigurationDirectoryMode=0710
 
-# /var/lib/bitcoind
-StateDirectory=bitcoind
+# /var/lib/monkecoind
+StateDirectory=monkecoind
 StateDirectoryMode=0710
 
 # Hardening measures

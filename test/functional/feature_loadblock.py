@@ -16,11 +16,11 @@ import sys
 import tempfile
 import urllib
 
-from test_framework.test_framework import BitcoinTestFramework
+from test_framework.test_framework import MonkecoinTestFramework
 from test_framework.util import assert_equal
 
 
-class LoadblockTest(BitcoinTestFramework):
+class LoadblockTest(MonkecoinTestFramework):
     def set_test_params(self):
         self.setup_clean_chain = True
         self.num_nodes = 2

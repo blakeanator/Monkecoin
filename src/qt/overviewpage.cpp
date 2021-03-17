@@ -6,13 +6,16 @@
 #include <qt/forms/ui_overviewpage.h>
 
 #include <qt/bitcoinunits.h>
+#include <chainparams.h>
 #include <qt/clientmodel.h>
+#include <qt/donationwalletmodel.h>
 #include <qt/guiconstants.h>
 #include <qt/guiutil.h>
 #include <qt/optionsmodel.h>
 #include <qt/platformstyle.h>
 #include <qt/transactionfilterproxy.h>
 #include <qt/transactiontablemodel.h>
+#include <validation.h>
 #include <qt/walletmodel.h>
 
 #include <QAbstractItemDelegate>
@@ -30,7 +33,7 @@ class TxViewDelegate : public QAbstractItemDelegate
     Q_OBJECT
 public:
     explicit TxViewDelegate(const PlatformStyle *_platformStyle, QObject *parent=nullptr):
-        QAbstractItemDelegate(parent), unit(BitcoinUnits::BTC),
+        QAbstractItemDelegate(parent), unit(MonkecoinUnits::MKE),
         platformStyle(_platformStyle)
     {
 
@@ -88,7 +91,7 @@ public:
             foreground = option.palette.color(QPalette::Text);
         }
         painter->setPen(foreground);
-        QString amountText = BitcoinUnits::formatWithUnit(unit, amount, true, BitcoinUnits::SeparatorStyle::ALWAYS);
+        QString amountText = MonkecoinUnits::formatWithUnit(unit, amount, true, MonkecoinUnits::SeparatorStyle::ALWAYS);
         if(!confirmed)
         {
             amountText = QString("[") + amountText + QString("]");
@@ -123,6 +126,21 @@ OverviewPage::OverviewPage(const PlatformStyle *platformStyle, QWidget *parent) 
 
     m_balances.balance = -1;
 
+    // Set the donation list
+    ui->donationComboBox->setModel(new DonationWalletModel(this));
+
+    std::string donationString = "For every block that is added to the blockchain, " + std::to_string((double)GetBlockDonationSubsidy(1, Params().GetConsensus()) / (double)COIN) + " MKE is minted to non-profits. When you transact on a given block, you get to \"vote\" on which non-profit you want the newly minted coin to go to.";
+
+    if (ENABLE_CELEBRATION_BLOCK)
+    {
+        unsigned int celebrationBlock = GetCelebrationBlock(Params().GetConsensus());
+
+        donationString += "\n\nThe Celebration Block (" + std::to_string(celebrationBlock) + ") is after the last minable block and mints " + std::to_string(GetBlockDonationSubsidy(celebrationBlock, Params().GetConsensus())) + " MKE to donation wallets.";
+    }
+
+    // Set the donation text
+    ui->donationTextLabel->setText(QString::fromStdString(donationString));
+
     // use a SingleColorIcon for the "out of sync warning" icon
     QIcon icon = platformStyle->SingleColorIcon(":/icons/warning");
     icon.addPixmap(icon.pixmap(QSize(64,64), QIcon::Normal), QIcon::Disabled); // also set the disabled icon because we are using a disabled QPushButton to work around missing HiDPI support of QLabel (https://bugreports.qt.io/browse/QTBUG-42503)
@@ -141,6 +159,40 @@ OverviewPage::OverviewPage(const PlatformStyle *platformStyle, QWidget *parent) 
     showOutOfSyncWarning(true);
     connect(ui->labelWalletStatus, &QPushButton::clicked, this, &OverviewPage::handleOutOfSyncWarningClicks);
     connect(ui->labelTransactionsStatus, &QPushButton::clicked, this, &OverviewPage::handleOutOfSyncWarningClicks);
+    connect(ui->donationComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &OverviewPage::donationChanged);
+
+    // Set default based on configuration
+    donationChanged(ui->donationComboBox->currentIndex());
+}
+
+void OverviewPage::donationChanged(int idx)
+{
+    if (idx == 0)
+    {
+        ui->donationWebsiteLabel->setVisible(false);
+        return;
+    }
+
+    ui->donationWebsiteLabel->setVisible(true);
+
+    DonationWalletModel* model = static_cast<DonationWalletModel*>(ui->donationComboBox->model());
+    std::string websiteName = model->GetWebsite(idx).toStdString();
+
+    std::string http = "http://";
+    if (websiteName.substr(0, http.length()) == http)
+         websiteName.erase(0, http.length());
+
+    std::string https = "https://";
+    if (websiteName.substr(0, https.length()) == https)
+         websiteName.erase(0, https.length());
+
+    //std::string www = "www.";
+    //if (websiteName.substr(0, www.length()) == www)
+    //     websiteName.erase(0, www.length());
+
+    std::string websiteString = "<a href=\"" + model->GetWebsite(idx).toStdString() + "\">" + websiteName + "</a>";
+
+    ui->donationWebsiteLabel->setText(QString::fromStdString(websiteString));
 }
 
 void OverviewPage::handleTransactionClicked(const QModelIndex &index)
@@ -180,25 +232,25 @@ void OverviewPage::setBalance(const interfaces::WalletBalances& balances)
     m_balances = balances;
     if (walletModel->wallet().isLegacy()) {
         if (walletModel->wallet().privateKeysDisabled()) {
-            ui->labelBalance->setText(BitcoinUnits::formatWithPrivacy(unit, balances.watch_only_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-            ui->labelUnconfirmed->setText(BitcoinUnits::formatWithPrivacy(unit, balances.unconfirmed_watch_only_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-            ui->labelImmature->setText(BitcoinUnits::formatWithPrivacy(unit, balances.immature_watch_only_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-            ui->labelTotal->setText(BitcoinUnits::formatWithPrivacy(unit, balances.watch_only_balance + balances.unconfirmed_watch_only_balance + balances.immature_watch_only_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+            ui->labelBalance->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.watch_only_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+            ui->labelUnconfirmed->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.unconfirmed_watch_only_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+            ui->labelImmature->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.immature_watch_only_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+            ui->labelTotal->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.watch_only_balance + balances.unconfirmed_watch_only_balance + balances.immature_watch_only_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
         } else {
-            ui->labelBalance->setText(BitcoinUnits::formatWithPrivacy(unit, balances.balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-            ui->labelUnconfirmed->setText(BitcoinUnits::formatWithPrivacy(unit, balances.unconfirmed_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-            ui->labelImmature->setText(BitcoinUnits::formatWithPrivacy(unit, balances.immature_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-            ui->labelTotal->setText(BitcoinUnits::formatWithPrivacy(unit, balances.balance + balances.unconfirmed_balance + balances.immature_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-            ui->labelWatchAvailable->setText(BitcoinUnits::formatWithPrivacy(unit, balances.watch_only_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-            ui->labelWatchPending->setText(BitcoinUnits::formatWithPrivacy(unit, balances.unconfirmed_watch_only_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-            ui->labelWatchImmature->setText(BitcoinUnits::formatWithPrivacy(unit, balances.immature_watch_only_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-            ui->labelWatchTotal->setText(BitcoinUnits::formatWithPrivacy(unit, balances.watch_only_balance + balances.unconfirmed_watch_only_balance + balances.immature_watch_only_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+            ui->labelBalance->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+            ui->labelUnconfirmed->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.unconfirmed_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+            ui->labelImmature->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.immature_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+            ui->labelTotal->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.balance + balances.unconfirmed_balance + balances.immature_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+            ui->labelWatchAvailable->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.watch_only_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+            ui->labelWatchPending->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.unconfirmed_watch_only_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+            ui->labelWatchImmature->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.immature_watch_only_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+            ui->labelWatchTotal->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.watch_only_balance + balances.unconfirmed_watch_only_balance + balances.immature_watch_only_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
         }
     } else {
-        ui->labelBalance->setText(BitcoinUnits::formatWithPrivacy(unit, balances.balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-        ui->labelUnconfirmed->setText(BitcoinUnits::formatWithPrivacy(unit, balances.unconfirmed_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-        ui->labelImmature->setText(BitcoinUnits::formatWithPrivacy(unit, balances.immature_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
-        ui->labelTotal->setText(BitcoinUnits::formatWithPrivacy(unit, balances.balance + balances.unconfirmed_balance + balances.immature_balance, BitcoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+        ui->labelBalance->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+        ui->labelUnconfirmed->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.unconfirmed_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+        ui->labelImmature->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.immature_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
+        ui->labelTotal->setText(MonkecoinUnits::formatWithPrivacy(unit, balances.balance + balances.unconfirmed_balance + balances.immature_balance, MonkecoinUnits::SeparatorStyle::ALWAYS, m_privacy));
     }
     // only show immature (newly mined) balance if it's non-zero, so as not to complicate things
     // for the non-mining users
@@ -266,7 +318,7 @@ void OverviewPage::setWalletModel(WalletModel *model)
         });
     }
 
-    // update the display unit, to not use the default ("BTC")
+    // update the display unit, to not use the default ("MKE")
     updateDisplayUnit();
 }
 

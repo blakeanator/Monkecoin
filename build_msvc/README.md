@@ -14,7 +14,7 @@ The minimal steps required to build Bitcoin Core with the msbuild toolchain are 
 ```
 cd build_msvc
 py -3 msvc-autogen.py
-msbuild /m bitcoin.sln /p:Platform=x64 /p:Configuration=Release /t:build
+msbuild /m monkecoin.sln /p:Platform=x64 /p:Configuration=Release /t:build
 ```
 
 Dependencies
@@ -37,7 +37,7 @@ Some prebuilt x64 versions of Qt can be downloaded from [here](https://github.co
 
 To determine which Qt prebuilt version to download open the `.appveyor.yml` file and note the `QT_DOWNLOAD_URL`. When extracting the zip file the destination path must be set to `C:\`. This is due to the way that Qt includes, libraries and tools use internal paths.
 
-To build Bitcoin Core without Qt unload or disable the `bitcoin-qt`, `libbitcoin_qt` and `test_bitcoin-qt` projects.
+To build Bitcoin Core without Qt unload or disable the `monkecoin-qt`, `libmonkecoin_qt` and `test_monkecoin-qt` projects.
 
 Building
 ---------------------
@@ -56,16 +56,16 @@ PS >py -3 msvc-autogen.py
 - To build from the command line with the Visual Studio 2017 toolchain use:
 
 ```
-msbuild /m bitcoin.sln /p:Platform=x64 /p:Configuration=Release /p:PlatformToolset=v141 /t:build
+msbuild /m monkecoin.sln /p:Platform=x64 /p:Configuration=Release /p:PlatformToolset=v141 /t:build
 ```
 
 - To build from the command line with the Visual Studio 2019 toolchain use:
 
 ```
-msbuild /m bitcoin.sln /p:Platform=x64 /p:Configuration=Release /t:build
+msbuild /m monkecoin.sln /p:Platform=x64 /p:Configuration=Release /t:build
 ```
 
-- Alternatively open the `build_msvc/bitcoin.sln` file in Visual Studio.
+- Alternatively open the `build_msvc/monkecoin.sln` file in Visual Studio.
 
 AppVeyor
 ---------------------
@@ -74,6 +74,6 @@ The .appveyor.yml in the root directory is suitable to perform builds on [AppVey
 For safety reasons the Bitcoin Core .appveyor.yml file has the artifact options disabled. The build will be performed but no executable files will be available. To enable artifacts on a forked repository uncomment the lines shown below:
 
 ```
-    #- 7z a bitcoin-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\build_msvc\%platform%\%configuration%\*.exe
-    #- path: bitcoin-%APPVEYOR_BUILD_VERSION%.zip
+    #- 7z a monkecoin-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\build_msvc\%platform%\%configuration%\*.exe
+    #- path: monkecoin-%APPVEYOR_BUILD_VERSION%.zip
 ```

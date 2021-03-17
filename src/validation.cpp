@@ -781,7 +781,7 @@ bool MemPoolAccept::PreChecks(ATMPArgs& args, Workspace& ws)
         // being able to broadcast descendants of an unconfirmed transaction
         // to be secure by simply only having two immediately-spendable
         // outputs - one for each counterparty. For more info on the uses for
-        // this, see https://lists.linuxfoundation.org/pipermail/bitcoin-dev/2018-November/016518.html
+        // this, see https://lists.linuxfoundation.org/pipermail/monkecoin-dev/2018-November/016518.html
         if (nSize >  EXTRA_DESCENDANT_TX_SIZE_LIMIT ||
                 !m_pool.CalculateMemPoolAncestors(*entry, setAncestors, 2, m_limit_ancestor_size, m_limit_descendants + 1, m_limit_descendant_size + EXTRA_DESCENDANT_TX_SIZE_LIMIT, dummy_err_string)) {
             return state.Invalid(TxValidationResult::TX_MEMPOOL_POLICY, "too-long-mempool-chain", errString);
@@ -1235,15 +1235,147 @@ bool ReadRawBlockFromDisk(std::vector<uint8_t>& block, const CBlockIndex* pindex
 
 CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams)
 {
-    int halvings = nHeight / consensusParams.nSubsidyHalvingInterval;
-    // Force block reward to zero when right shift is undefined.
-    if (halvings >= 64)
+    // Skip the genesis block
+    if (nHeight <= 0)
+    {
         return 0;
+    }
 
-    CAmount nSubsidy = 50 * COIN;
-    // Subsidy is cut in half every 210,000 blocks which will occur approximately every 4 years.
-    nSubsidy >>= halvings;
+    /* There are 6,307,200 blocks with mining rewards due to a max halving rate of 6 (over
+       a 24 year period assuming 1,050,200 blocks mined every 4 years). With the current
+       parameters (a max coinbase reward of 32) this means that 66,215,600 coins will be
+       minted to miners. This is intentionally less than the total supply of 69,420,000
+       which leaves 3,204,400 coins to be minted to donation wallets (which ends up being
+       4.6% of the total currency supply). */
+
+    unsigned int coinReward = MAX_MINING_REWARD;
+    unsigned int halvingStage = GetBlockSubsidyHalving(nHeight, consensusParams);
+
+    // Force no reward when the halving max has been exceeded 
+    if (halvingStage > GetBlockSubsidyHalvingMax(consensusParams))
+    {
+        return 0;
+    }
+    // If halving is enabled
+    else if (halvingStage > 0)
+    {
+        coinReward /= pow(2, halvingStage);
+    }
+
+    CAmount nSubsidy = coinReward * COIN;
+
     return nSubsidy;
+}
+
+CAmount GetBlockDonationSubsidy(int nHeight, const Consensus::Params& consensusParams)
+{
+    // Skip the genesis block
+    if (nHeight <= 0)
+    {
+        return 0;
+    }
+
+    // If the mintable supply is exhausted
+    if (!HasMintableCoinRemainingInSupply(nHeight, consensusParams))
+    {
+        return 0;
+    }
+
+    unsigned int minableBlocks = GetMaxMinableBlocks(consensusParams) + ENABLE_CELEBRATION_BLOCK;
+
+    // A static amount of coin is allocated to donations for every block (~0.508054287163876 MKE with current parameters)
+    CAmount nDonationSubsidy = GetTotalDonationSubsidySupply(consensusParams) / minableBlocks;
+
+    if (ENABLE_CELEBRATION_BLOCK)
+    {
+        // round down
+        //float value = (int)(coinDonation * 10 + .5); 
+        //coinDonation = (float)value / 10; 
+
+        // If the block is the celebration block
+        if (nHeight == GetCelebrationBlock(consensusParams))
+        {
+            return 58000 * COIN;
+        }
+    }
+
+    return nDonationSubsidy;
+}
+
+unsigned int GetBlockSubsidyHalving(int nHeight, const Consensus::Params& consensusParams)
+{
+    return nHeight / consensusParams.nSubsidyHalvingInterval;
+}
+
+unsigned int GetBlockSubsidyHalvingMax(const Consensus::Params& consensusParams)
+{
+    // Halves the max mining reward until it cannot be wholly divisible (no fractional values lower than 1)
+    return log2(MAX_MINING_REWARD);
+}
+
+unsigned int GetCelebrationBlock(const Consensus::Params& consensusParams)
+{
+    // There is only a celebration block if donation rewards are rounded down
+    if (ENABLE_CELEBRATION_BLOCK)
+    {
+        // The celebration block should be the block after the last minable block
+        return GetMaxMinableBlocks(consensusParams) + 1;
+    }
+
+    return 0;
+}
+
+unsigned int GetMaxMinableBlocks(const Consensus::Params& consensusParams)
+{
+    return consensusParams.nSubsidyHalvingInterval * (GetBlockSubsidyHalvingMax(consensusParams) + 1);
+}
+
+CAmount GetTotalMiningSubsidySupply(const Consensus::Params& consensusParams)
+{
+    CAmount TotalSupply = 0;
+
+    // For each halving step
+    for (unsigned int i = 0; i <= GetBlockSubsidyHalvingMax(consensusParams); i++)
+    {
+        unsigned int AdjustedMiningReward = MAX_MINING_REWARD;
+
+        if (i > 0)
+        {
+            AdjustedMiningReward /=  pow(2, GetBlockSubsidyHalving(consensusParams.nSubsidyHalvingInterval * i, consensusParams));
+        }
+
+        TotalSupply += consensusParams.nSubsidyHalvingInterval * AdjustedMiningReward; 
+    }
+
+    return TotalSupply * COIN;
+}
+
+double GetTotalMiningSubsidyPercentage(const Consensus::Params& consensusParams)
+{
+    return (double)GetTotalMiningSubsidySupply(consensusParams) / (double)MAX_MONEY;
+}
+
+CAmount GetTotalDonationSubsidySupply(const Consensus::Params& consensusParams)
+{
+    return MAX_MONEY - GetTotalMiningSubsidySupply(consensusParams);
+}
+
+double GetTotalDonationSubsidyPercentage(const Consensus::Params& consensusParams)
+{
+    return 1.0 - (double)GetTotalMiningSubsidyPercentage(consensusParams);
+}
+
+bool HasMintableCoinRemainingInSupply(int nHeight, const Consensus::Params& consensusParams)
+{
+    // Skip negative values
+    if (nHeight < 0)
+    {
+        return false;
+    }
+
+    unsigned int unsignedHeight = nHeight;
+
+    return unsignedHeight <= GetMaxMinableBlocks(consensusParams) + ENABLE_CELEBRATION_BLOCK;
 }
 
 CoinsViews::CoinsViews(

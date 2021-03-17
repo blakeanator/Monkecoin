@@ -1,5 +1,5 @@
 // Copyright 2014 BitPay Inc.
-// Copyright 2015 Bitcoin Core Developers
+// Copyright 2015 Monkecoin Core Developers
 // Distributed under the MIT software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -34,6 +34,9 @@ public:
     UniValue(bool val_) {
         setBool(val_);
     }
+    UniValue(unsigned int val_) {
+        setInt(val_);
+    }
     UniValue(int val_) {
         setInt(val_);
     }
@@ -55,6 +58,7 @@ public:
     bool setNumStr(const std::string& val);
     bool setInt(uint64_t val);
     bool setInt(int64_t val);
+    bool setInt(unsigned int val_) { return setInt((uint64_t)val_); }
     bool setInt(int val_) { return setInt((int64_t)val_); }
     bool setFloat(double val);
     bool setStr(const std::string& val);
@@ -100,6 +104,10 @@ public:
         UniValue tmpVal(val_);
         return push_back(tmpVal);
     }
+    bool push_back(unsigned int val_) {
+        UniValue tmpVal(val_);
+        return push_back(tmpVal);
+    }
     bool push_back(int val_) {
         UniValue tmpVal(val_);
         return push_back(tmpVal);
@@ -130,6 +138,10 @@ public:
     }
     bool pushKV(const std::string& key, bool val_) {
         UniValue tmpVal((bool)val_);
+        return pushKV(key, tmpVal);
+    }
+    bool pushKV(const std::string& key, unsigned int val_) {
+        UniValue tmpVal((uint64_t)val_);
         return pushKV(key, tmpVal);
     }
     bool pushKV(const std::string& key, int val_) {

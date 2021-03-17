@@ -13,6 +13,7 @@
 #include <consensus/merkle.h>
 #include <consensus/tx_verify.h>
 #include <consensus/validation.h>
+#include <donationwallets.h>
 #include <policy/feerate.h>
 #include <policy/policy.h>
 #include <pow.h>
@@ -161,6 +162,28 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     coinbaseTx.vout.resize(1);
     coinbaseTx.vout[0].scriptPubKey = scriptPubKeyIn;
     coinbaseTx.vout[0].nValue = nFees + GetBlockSubsidy(nHeight, chainparams.GetConsensus());
+
+    // If there is avaliable currency to mint
+    if (HasMintableCoinRemainingInSupply(nHeight, chainparams.GetConsensus()))
+    {
+        // Get the active donation wallets
+        std::vector<DonationWalletDescriptor> donationWallets = DonationWallets::GetActiveDonationWallets();
+        int numberOfDonationWallets = donationWallets.size();
+
+        // Add the donation wallets to the coinbase transaction
+        coinbaseTx.vout.resize(1 + numberOfDonationWallets);
+
+        // Add an evenly distributed minted coin amount between the donation wallets
+        for (int i = 0; i <= numberOfDonationWallets; i++)
+        {
+            //CTxDestination bla;// = 
+            //CScript bla2;// = GetScriptForDestination();
+
+            coinbaseTx.vout[i].scriptPubKey = donationWallets[i].GetCurrentPubKey();
+            coinbaseTx.vout[i].nValue = GetBlockDonationSubsidy(nHeight, chainparams.GetConsensus()) / numberOfDonationWallets;
+        }
+    }
+
     coinbaseTx.vin[0].scriptSig = CScript() << nHeight << OP_0;
     pblock->vtx[0] = MakeTransactionRef(std::move(coinbaseTx));
     pblocktemplate->vchCoinbaseCommitment = GenerateCoinbaseCommitment(*pblock, pindexPrev, chainparams.GetConsensus());

@@ -3,7 +3,7 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #if defined(HAVE_CONFIG_H)
-#include <config/bitcoin-config.h>
+#include <config/monkecoin-config.h>
 #endif
 
 #include <interfaces/node.h>
@@ -68,9 +68,9 @@ int main(int argc, char* argv[])
 
     // Don't remove this, it's needed to access
     // QApplication:: and QCoreApplication:: in the tests
-    BitcoinApplication app;
+    MonkecoinApplication app;
     app.setNode(*node);
-    app.setApplicationName("Bitcoin-Qt-test");
+    app.setApplicationName("Monkecoin-Qt-test");
 
     app.node().context()->args = &gArgs;     // Make gArgs available in the NodeContext
     AppTests app_tests(app);

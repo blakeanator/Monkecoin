@@ -7,7 +7,7 @@
 #define BITCOIN_VALIDATION_H
 
 #if defined(HAVE_CONFIG_H)
-#include <config/bitcoin-config.h>
+#include <config/monkecoin-config.h>
 #endif
 
 #include <amount.h>
@@ -93,6 +93,12 @@ static const unsigned int DEFAULT_CHECKLEVEL = 3;
 // one 128MB block file + added 15% undo data = 147MB greater for a total of 545MB
 // Setting the target to >= 550 MiB will make it likely we can respect the target.
 static const uint64_t MIN_DISK_SPACE_FOR_BLOCK_FILES = 550 * 1024 * 1024;
+
+// The max mining reward possible for a block (must be a power of two)
+static const unsigned int MAX_MINING_REWARD = 32;
+
+// Whether the donation reward should be rounded and the accumulated coin be given after the last minable block
+static const bool ENABLE_CELEBRATION_BLOCK = false;
 
 struct BlockHasher
 {
@@ -180,7 +186,39 @@ CTransactionRef GetTransaction(const CBlockIndex* const block_index, const CTxMe
  * validationinterface callback.
  */
 bool ActivateBestChain(BlockValidationState& state, const CChainParams& chainparams, std::shared_ptr<const CBlock> pblock = std::shared_ptr<const CBlock>());
+
+// The ammount of coin going to the miner for a given block
 CAmount GetBlockSubsidy(int nHeight, const Consensus::Params& consensusParams);
+
+// The amount of coin going to the donation wallets for a given block
+CAmount GetBlockDonationSubsidy(int nHeight, const Consensus::Params& consensusParams);
+
+// What the block subsidy halving value is
+unsigned int GetBlockSubsidyHalving(int nHeight, const Consensus::Params& consensusParams);
+
+// The total amount of times the mining reward will halve in the currency's lifespan
+unsigned int GetBlockSubsidyHalvingMax(const Consensus::Params& consensusParams);
+
+// The block after the last minable block
+unsigned int GetCelebrationBlock(const Consensus::Params& consensusParams);
+
+// The maximum number of blocks that can be mined
+unsigned int GetMaxMinableBlocks(const Consensus::Params& consensusParams);
+
+// The total amount coins that can be mined over the lifespan of the currency
+CAmount GetTotalMiningSubsidySupply(const Consensus::Params& consensusParams);
+
+// What percentage of the total currency supply goes to donation miners
+double GetTotalMiningSubsidyPercentage(const Consensus::Params& consensusParams);
+
+// The total amount coins that go to donation wallets over the lifespan of the currency
+CAmount GetTotalDonationSubsidySupply(const Consensus::Params& consensusParams);
+
+// What percentage of the total currency supply goes to donation wallets
+double GetTotalDonationSubsidyPercentage(const Consensus::Params& consensusParams);
+
+// Whether the currency has remaing coins yet to be minted (includes celebration block)
+bool HasMintableCoinRemainingInSupply(int nHeight, const Consensus::Params& consensusParams);
 
 /** Guess verification progress (as a fraction between 0.0=genesis and 1.0=current tip). */
 double GuessVerificationProgress(const ChainTxData& data, const CBlockIndex* pindex);

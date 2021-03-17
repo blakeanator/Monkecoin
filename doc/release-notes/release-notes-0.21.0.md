@@ -3,7 +3,7 @@
 
 Bitcoin Core version 0.21.0 is now available from:
 
-  <https://bitcoincore.org/bin/bitcoin-core-0.21.0/>
+  <https://monkecoincore.org/bin/monkecoin-core-0.21.0/>
 
 This release includes new features, various bug fixes and performance
 improvements, as well as updated translations.
@@ -14,15 +14,15 @@ Please report bugs using the issue tracker at GitHub:
 
 To receive security and update notifications, please subscribe to:
 
-  <https://bitcoincore.org/en/list/announcements/join/>
+  <https://monkecoincore.org/en/list/announcements/join/>
 
 How to Upgrade
 ==============
 
 If you are running an older version, shut it down. Wait until it has completely
 shut down (which might take a few minutes in some cases), then run the
-installer (on Windows) or just copy over `/Applications/Bitcoin-Qt` (on Mac)
-or `bitcoind`/`bitcoin-qt` (on Linux).
+installer (on Windows) or just copy over `/Applications/Monkecoin-Qt` (on Mac)
+or `monkecoind`/`monkecoin-qt` (on Linux).
 
 Upgrading directly from a version of Bitcoin Core that has reached its EOL is
 possible, but it might take some time if the data directory needs to be migrated. Old
@@ -32,7 +32,7 @@ Compatibility
 ==============
 
 Bitcoin Core is supported and extensively tested on operating systems
-using the Linux kernel, macOS 10.12+, and Windows 7 and newer.  Bitcoin
+using the Linux kernel, macOS 10.12+, and Windows 7 and newer.  Monkecoin
 Core should also work on most other Unix-like systems but is not as
 frequently tested on them.  It is not recommended to use Bitcoin Core on
 unsupported systems.
@@ -73,7 +73,7 @@ P2P and network changes
 
 - This release adds support for Tor version 3 hidden services, and rumoring them
   over the network to other peers using
-  [BIP155](https://github.com/bitcoin/bips/blob/master/bip-0155.mediawiki).
+  [BIP155](https://github.com/monkecoin/bips/blob/master/bip-0155.mediawiki).
   Version 2 hidden services are still fully supported by Bitcoin Core, but the
   Tor network will start
   [deprecating](https://blog.torproject.org/v2-deprecation-timeline) them in the
@@ -98,12 +98,12 @@ P2P and network changes
   eclipse attack. (#17428)
 
 - This release adds support for serving
-  [BIP157](https://github.com/bitcoin/bips/blob/master/bip-0157.mediawiki) compact
+  [BIP157](https://github.com/monkecoin/bips/blob/master/bip-0157.mediawiki) compact
   filters to peers on the network when enabled using
   `-blockfilterindex=1 -peercfilters=1`. (#16442)
 
 - This release adds support for signets
-  ([BIP325](https://github.com/bitcoin/bips/blob/master/bip-0325.mediawiki)) in
+  ([BIP325](https://github.com/monkecoin/bips/blob/master/bip-0325.mediawiki)) in
   addition to the existing mainnet, testnet, and regtest networks. Signets are
   centrally-controlled test networks, allowing them to be more predictable
   test environments than the older testnet. One public signet is maintained, and
@@ -111,13 +111,13 @@ P2P and network changes
   (#18267).
 
 - This release implements
-  [BIP339](https://github.com/bitcoin/bips/blob/master/bip-0339.mediawiki)
+  [BIP339](https://github.com/monkecoin/bips/blob/master/bip-0339.mediawiki)
   wtxid relay. When negotiated, transactions are announced using their wtxid
   instead of their txid. (#18044).
 
 - This release implements the proposed Taproot consensus rules
-  ([BIP341](https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki) and
-  [BIP342](https://github.com/bitcoin/bips/blob/master/bip-0342.mediawiki)),
+  ([BIP341](https://github.com/monkecoin/bips/blob/master/bip-0341.mediawiki) and
+  [BIP342](https://github.com/monkecoin/bips/blob/master/bip-0342.mediawiki)),
   without activation on mainnet. Experimentation with Taproot can be done on
   signet, where its rules are already active. (#19553)
 
@@ -231,21 +231,21 @@ Changes to Wallet or GUI related settings can be found in the GUI or Wallet sect
 Tools and Utilities
 -------------------
 
-- A new `bitcoin-cli -netinfo` command provides a network peer connections
+- A new `monkecoin-cli -netinfo` command provides a network peer connections
   dashboard that displays data from the `getpeerinfo` and `getnetworkinfo` RPCs
   in a human-readable format. An optional integer argument from `0` to `4` may
   be passed to see increasing levels of detail. (#19643)
 
-- A new `bitcoin-cli -generate` command, equivalent to RPC `generatenewaddress`
+- A new `monkecoin-cli -generate` command, equivalent to RPC `generatenewaddress`
   followed by `generatetoaddress`, can generate blocks for command line testing
   purposes. This is a client-side version of the former `generate` RPC. See the
   help for details. (#19133)
 
-- The `bitcoin-cli -getinfo` command now displays the wallet name and balance for
+- The `monkecoin-cli -getinfo` command now displays the wallet name and balance for
   each of the loaded wallets when more than one is loaded (e.g. in multiwallet
   mode) and a wallet is not specified with `-rpcwallet`. (#18594)
 
-- The `connections` field of `bitcoin-cli -getinfo` is now expanded to return a JSON
+- The `connections` field of `monkecoin-cli -getinfo` is now expanded to return a JSON
   object with `in`, `out` and `total` numbers of peer connections. It previously
   returned a single integer value for the total number of peer connections. (#19405)
 
@@ -279,7 +279,7 @@ Wallet
   empty. Previously it failed. (#17219)
 
 - The `-salvagewallet` startup option has been removed. A new `salvage` command
-  has been added to the `bitcoin-wallet` tool which performs the salvage
+  has been added to the `monkecoin-wallet` tool which performs the salvage
   operations that `-salvagewallet` did. (#18918)
 
 - A new configuration flag `-maxapsfee` has been added, which sets the max
@@ -327,13 +327,13 @@ Wallet
 
 Bitcoin Core will no longer automatically create new wallets on startup. It will
 load existing wallets specified by `-wallet` options on the command line or in
-`bitcoin.conf` or `settings.json` files. And by default it will also load a
+`monkecoin.conf` or `settings.json` files. And by default it will also load a
 top-level unnamed ("") wallet. However, if specified wallets don't exist,
 Bitcoin Core will now just log warnings instead of creating new wallets with
 new keys and addresses like previous releases did.
 
 New wallets can be created through the GUI (which has a more prominent create
-wallet option), through the `bitcoin-cli createwallet` or `bitcoin-wallet
+wallet option), through the `monkecoin-cli createwallet` or `monkecoin-wallet
 create` commands, or the `createwallet` RPC. (#15454, #20186)
 
 ### Experimental Descriptor Wallets
@@ -471,18 +471,18 @@ was already being broken by the move to descriptors.
   is introduced to the `sendtoaddress`, `sendmany`, `fundrawtransaction` and
   `walletcreatefundedpsbt` RPCs as well as to the experimental new `send`
   RPC. The legacy `feeRate` option in `fundrawtransaction` and
-  `walletcreatefundedpsbt` still exists for setting a fee rate in BTC per 1,000
-  vbytes (BTC/kvB), but it is expected to be deprecated soon to avoid
-  confusion. For these RPCs, the fee rate error message is updated from BTC/kB
-  to sat/vB and the help documentation in BTC/kB is updated to BTC/kvB. The
+  `walletcreatefundedpsbt` still exists for setting a fee rate in MKE per 1,000
+  vbytes (MKE/kvB), but it is expected to be deprecated soon to avoid
+  confusion. For these RPCs, the fee rate error message is updated from MKE/kB
+  to sat/vB and the help documentation in MKE/kB is updated to MKE/kvB. The
   `send` and `sendtoaddress` RPC examples are updated to aid users in creating
   transactions with explicit fee rates. (#20305, #11413)
 
-- The `bumpfee` RPC `fee_rate` option is changed from BTC/kvB to sat/vB and the
+- The `bumpfee` RPC `fee_rate` option is changed from MKE/kvB to sat/vB and the
   help documentation is updated. Users are warned that this is a breaking API
   change, but it should be relatively benign: the large (100,000 times)
-  difference between BTC/kvB and sat/vB units means that a transaction with a
-  fee rate mistakenly calculated in BTC/kvB rather than sat/vB should raise an
+  difference between MKE/kvB and sat/vB units means that a transaction with a
+  fee rate mistakenly calculated in MKE/kvB rather than sat/vB should raise an
   error due to the fee rate being set too low. In the worst case, the
   transaction may send at 1 sat/vB, but as Replace-by-Fee (BIP125 RBF) is active
   by default when an explicit fee rate is used, the transaction fee can be
@@ -494,7 +494,7 @@ GUI changes
 - Wallets created or loaded in the GUI will now be automatically loaded on
   startup, so they don't need to be manually reloaded next time Bitcoin Core is
   started. The list of wallets to load on startup is stored in
-  `\<datadir\>/settings.json` and augments any command line or `bitcoin.conf`
+  `\<datadir\>/settings.json` and augments any command line or `monkecoin.conf`
   `-wallet=` settings that specify more wallets to load. Wallets that are
   unloaded in the GUI get removed from the settings list so they won't load
   again automatically next startup. (#19754)
@@ -599,7 +599,7 @@ Tests
 - #19044 Add support for getcfilters (jnewbery)
 - #19084 improve code documentation for dns seed behaviour (ajtowns)
 - #19260 disconnect peers that send filterclear + update existing filter msg disconnect logic (gzhao408)
-- #19284 Add seed.bitcoin.wiz.biz to DNS seeds (wiz)
+- #19284 Add seed.monkecoin.wiz.biz to DNS seeds (wiz)
 - #19322 split PushInventory() (jnewbery)
 - #19204 Reduce inv traffic during IBD (MarcoFalke)
 - #19470 banlist: log post-swept banlist size at startup (fanquake)
@@ -697,7 +697,7 @@ Tests
 - #20130 Remove db mode string (S3RK)
 - #19077 Add sqlite as an alternative wallet database and use it for new descriptor wallets (achow101)
 - #20125 Expose database format in getwalletinfo (promag)
-- #20198 Show name, format and if uses descriptors in bitcoin-wallet tool (jonasschnelli)
+- #20198 Show name, format and if uses descriptors in monkecoin-wallet tool (jonasschnelli)
 - #20216 Fix buffer over-read in SQLite file magic check (theStack)
 - #20186 Make -wallet setting not create wallets (ryanofsky)
 - #20230 Fix bug when just created encrypted wallet cannot get address (hebasto)
@@ -734,7 +734,7 @@ Tests
 - #19282 Rephrase generatetoaddress help, and use `PACKAGE_NAME` (luke-jr)
 - #16377 don't automatically append inputs in walletcreatefundedpsbt (Sjors)
 - #19200 Remove deprecated getaddressinfo fields (jonatack)
-- #19133 rpc, cli, test: add bitcoin-cli -generate command (jonatack)
+- #19133 rpc, cli, test: add monkecoin-cli -generate command (jonatack)
 - #19469 Deprecate banscore field in getpeerinfo (jonatack)
 - #16525 Dump transaction version as an unsigned integer in RPC/TxToUniv (TheBlueMatt)
 - #19555 Deduplicate WriteHDKeypath() used in decodepsbt (theStack)
@@ -759,7 +759,7 @@ Tests
 - #19725 Add connection type to getpeerinfo, improve logs (amitiuttarwar)
 - #19969 Send RPC bug fix and touch-ups (Sjors)
 - #18309 zmq: Add support to listen on multiple interfaces (n-thumann)
-- #20055 Set HTTP Content-Type in bitcoin-cli (laanwj)
+- #20055 Set HTTP Content-Type in monkecoin-cli (laanwj)
 - #19956 Improve invalid vout value rpc error message (n1rna)
 - #20101 Change no wallet loaded message to be clearer (achow101)
 - #19998 Add `via_tor` to `getpeerinfo` output (hebasto)
@@ -820,7 +820,7 @@ Tests
 - gui#120 Fix multiwallet transaction notifications (promag)
 
 ### Build system
-- #18504 Drop bitcoin-tx and bitcoin-wallet dependencies on libevent (ryanofsky)
+- #18504 Drop monkecoin-tx and monkecoin-wallet dependencies on libevent (ryanofsky)
 - #18586 Bump gitian descriptors to 0.21 (laanwj)
 - #17595 guix: Enable building for `x86_64-w64-mingw32` target (dongcarl)
 - #17929 add linker optimisation flags to gitian & guix (Linux) (fanquake)
@@ -907,7 +907,7 @@ Tests
 - #18628 Add various low-level p2p tests (MarcoFalke)
 - #18615 Avoid accessing free'd memory in `validation_chainstatemanager_tests` (MarcoFalke)
 - #18571 fuzz: Disable debug log file (MarcoFalke)
-- #18653 add coverage for bitcoin-cli -rpcwait (jonatack)
+- #18653 add coverage for monkecoin-cli -rpcwait (jonatack)
 - #18660 Verify findCommonAncestor always initializes outputs (ryanofsky)
 - #17669 Have coins simulation test also use CCoinsViewDB (jamesob)
 - #18662 Replace gArgs with local argsman in bench (MarcoFalke)
@@ -1139,7 +1139,7 @@ Tests
 - #18939 Add c++17-enable flag to fuzzing instructions (mzumsande)
 - #18957 Add a link from ZMQ doc to ZMQ example in contrib/ (meeDamian)
 - #19058 Drop protobuf stuff (hebasto)
-- #19061 Add link to Visual Studio build readme (maitrebitcoin)
+- #19061 Add link to Visual Studio build readme (maitremonkecoin)
 - #19072 Expand section on Getting Started (MarcoFalke)
 - #18968 noban precludes maxuploadtarget disconnects (MarcoFalke)
 - #19005 Add documentation for 'checklevel' argument in 'verifychain' RPC… (kcalvinalvin)
@@ -1161,7 +1161,7 @@ Tests
 - #19765 Fix getmempoolancestors RPC result doc (MarcoFalke)
 - #19786 Remove label from good first issue template (MarcoFalke)
 - #19646 Updated outdated help command for getblocktemplate (jakeleventhal)
-- #18817 Document differences in bitcoind and bitcoin-qt locale handling (practicalswift)
+- #18817 Document differences in monkecoind and monkecoin-qt locale handling (practicalswift)
 - #19870 update PyZMQ install instructions, fix `zmq_sub.py` file permissions (jonatack)
 - #19903 Update build-openbsd.md with GUI support (grubles)
 - #19241 help: Generate checkpoint height from chainparams (luke-jr)

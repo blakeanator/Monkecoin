@@ -93,7 +93,7 @@ static UniValue getblockrewardhalving(const JSONRPCRequest& request)
 
     int nHeight = !request.params[0].isNull() ? request.params[0].get_int() : 1;
 
-    if (nHeight < 0 || nHeight > GetMaxMinableBlocks(Params().GetConsensus()))
+    if (nHeight < 0 || nHeight > (int)GetMaxMinableBlocks(Params().GetConsensus()))
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Block height out of range");
 
     return GetBlockSubsidyHalving(nHeight, Params().GetConsensus());
@@ -266,31 +266,66 @@ static UniValue donationtest(const JSONRPCRequest& request)
                 },
             }.ToString());
 
-    unsigned char pk[]=  "";
-    unsigned char sk[] = "";
-    int i = crypto_kem_keypair_SIKEp434(pk, sk);
-    printf("SIDH pk = %s, sk = %s",pk,sk);
+    uint8_t privateKey[374] = "";
+    uint8_t publicKey[330]=  "";
+    //unsigned char pk[330]=  "";
+    //unsigned char pk[374] = "";
+    int i = crypto_kem_keypair_SIKEp434(publicKey, privateKey);
 
-    //std::string result = std::to_string(i) + "\nprivate: " + std::string(pk) + "\npublic: " + std::string(sk);
+    //std::vector<uint8_t> prikv(privateKey, privateKey + 374);
+    //std::string prikvs = HexStr(prikv);
+    //std::string prikvs = HexStr(Span<uint8_t>(privateKey, privateKey + 374));
+
+    std::vector<uint8_t> pubkv(publicKey, publicKey + 330);
+    std::string pubkvs = HexStr(pubkv);
+
+    std::string result = "SIDH (" + std::to_string(i) + ")\nprivate: " + HexStr(MakeUCharSpan(privateKey)) + "\npublic: " + pubkvs;
+
+    return UniValue(result);
+}
+
+static UniValue donationtest2(const JSONRPCRequest& request)
+{
+    if (request.fHelp || request.params.size() != 0)
+        throw std::runtime_error(
+            RPCHelpMan{"donationtest2",
+                "\ntest2.\n",
+                {},
+                RPCResult{
+                    RPCResult::Type::NUM, "test2", "test2"
+                },
+                RPCExamples{
+                    HelpExampleCli("donationtest2", "")
+            + HelpExampleRpc("donationtest2", "")
+                },
+            }.ToString());
 
 
-/*
-    unsigned char* pk = nullptr;
-    unsigned char* sk = nullptr;
+    //const std::vector<unsigned char>& data = GetEncodedFilter();
+    //uint256 result;
+    //CHash256().Write(data).Finalize(result);
+    //return result;
+        
+    uint8_t test[] = "ff";
 
-    int i = crypto_kem_keypair_SIKEp434(pk, sk);
+    uint256 hash;
+    CHash256().Write(MakeUCharSpan(test)).Finalize(hash);
 
-    std::string pkstring(reinterpret_cast<char const*>(pk));
-    std::string skstring(reinterpret_cast<char const*>(sk));
+    //return hash;
+    return UniValue(HexStr(MakeUCharSpan(hash)));
 
-    std::string result = std::to_string(i) + "\nprivate: " + pkstring + "\npublic: " + skstring;
+    /*
 
-    return UniValue(result);*/
+    CSHA3_256 sha;
+    sha.Write(input.data(), input.size());
+        
+    assert(output.size() == CSHA3_256::OUTPUT_SIZE);
 
-    /*unsigned int test = 0;
-    secp256k1_context* bla = secp256k1_context_create(test);*/
+    unsigned char buf[CSHA3_256::OUTPUT_SIZE];
+    sha.Finalize(buf);
+    sha.Reset().Write(buf, CSHA3_256::OUTPUT_SIZE).Finalize(output.data());
 
-    return UniValue(std::string());
+    */
 }
 
 const CRPCCommand commands[] =
@@ -306,6 +341,7 @@ const CRPCCommand commands[] =
     { "donation",           "getsupplyratio",                   &getsupplyratio,                {} },
     { "donation",           "getsupplytotal",                   &getsupplytotal,                {} },
     { "donation",           "donationtest",                     &donationtest,                  {} },
+    { "donation",           "donationtest2",                    &donationtest2,                 {} },
 };
 
 void RegisterDonationWalletRPCCommands(CRPCTable& t)

@@ -32,7 +32,7 @@ compilers within the same executable will result in errors.
 BerkeleyDB is only necessary for the wallet functionality. To skip this, pass
 `--disable-wallet` to `./configure` and skip to the next section.
 
-It is recommended to use Berkeley DB 4.8. You cannot use the BerkeleyDB library
+It is recommended to use Berkeley DB 5.3. You cannot use the BerkeleyDB library
 from ports, for the same reason as boost above (g++/libstd++ incompatibility).
 If you have to build it yourself, you can use [the installation script included
 in contrib/](/contrib/install_db4.sh) like so:
@@ -69,7 +69,7 @@ Make sure `BDB_PREFIX` is set to the appropriate path from the above steps.
 To configure with wallet:
 ```bash
 ./configure --with-gui=no CC=cc CXX=c++ \
-    BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" \
+    BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-5.3" \
     BDB_CFLAGS="-I${BDB_PREFIX}/include" \
     MAKE=gmake
 ```
@@ -82,7 +82,7 @@ To configure without wallet:
 To configure with GUI:
 ```bash
 ./configure --with-gui=yes CC=cc CXX=c++ \
-    BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" \
+    BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-5.3" \
     BDB_CFLAGS="-I${BDB_PREFIX}/include" \
     MAKE=gmake
 ```

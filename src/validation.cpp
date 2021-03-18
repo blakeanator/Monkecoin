@@ -1293,7 +1293,7 @@ CAmount GetBlockDonationSubsidy(int nHeight, const Consensus::Params& consensusP
         //coinDonation = (float)value / 10; 
 
         // If the block is the celebration block
-        if (nHeight == GetCelebrationBlock(consensusParams))
+        if (nHeight == (int)GetCelebrationBlock(consensusParams))
         {
             return 58000 * COIN;
         }

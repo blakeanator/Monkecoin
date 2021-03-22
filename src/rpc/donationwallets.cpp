@@ -14,7 +14,7 @@
 
 // TEST
 #include <sidh.h>
-//#include <secp256k1.h>
+#include <crypto/sha3.h>
 // TEST
 
 static UniValue getblockdonation(const JSONRPCRequest& request)
@@ -292,7 +292,7 @@ static UniValue donationtest2(const JSONRPCRequest& request)
                 "\ntest2.\n",
                 {},
                 RPCResult{
-                    RPCResult::Type::NUM, "test2", "test2"
+                    RPCResult::Type::STR, "test2", "test2"
                 },
                 RPCExamples{
                     HelpExampleCli("donationtest2", "")
@@ -300,32 +300,40 @@ static UniValue donationtest2(const JSONRPCRequest& request)
                 },
             }.ToString());
 
-
-    //const std::vector<unsigned char>& data = GetEncodedFilter();
-    //uint256 result;
-    //CHash256().Write(data).Finalize(result);
-    //return result;
         
-    uint8_t test[] = "ff";
+    /*uint8_t test[0] = {};
 
-    uint256 hash;
-    CHash256().Write(MakeUCharSpan(test)).Finalize(hash);
-
-    //return hash;
-    return UniValue(HexStr(MakeUCharSpan(hash)));
-
-    /*
-
-    CSHA3_256 sha;
-    sha.Write(input.data(), input.size());
-        
-    assert(output.size() == CSHA3_256::OUTPUT_SIZE);
-
-    unsigned char buf[CSHA3_256::OUTPUT_SIZE];
+    CSHA256 sha = CSHA256();
+    sha.Write(test, 0);
+    unsigned char buf[CSHA256::OUTPUT_SIZE];
     sha.Finalize(buf);
-    sha.Reset().Write(buf, CSHA3_256::OUTPUT_SIZE).Finalize(output.data());
+    return UniValue(HexStr(MakeUCharSpan(buf)));*/
 
-    */
+
+
+
+
+
+    std::string s = "monke";
+    std::vector<uint8_t> test2(s.begin(), s.end());
+
+    //uint8_t empty[SHA3_256::OUTPUT_SIZE] = "";
+    //Span<uint8_t> output(empty);
+
+    uint8_t output[SHA3_256::OUTPUT_SIZE];
+
+    SHA3_256 sha = SHA3_256();
+    sha.Write(test2);
+    sha.Finalize(output);
+
+    //std::vector<uint8_t> test3(output, output + SHA3_256::OUTPUT_SIZE);
+    //std::vector<uint8_t> test3;
+    //test3.insert(test3.begin(), std::end(output), std::begin(output));
+    //uint256 test4 = uint256(test3);
+    //return UniValue(test4.GetHex());
+
+    return UniValue(HexStr(MakeUCharSpan(output)));
+    //return UniValue(HexStr(output));
 }
 
 const CRPCCommand commands[] =

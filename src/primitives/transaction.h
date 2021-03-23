@@ -173,6 +173,7 @@ struct CMutableTransaction;
  * - std::vector<CTxIn> vin
  * - std::vector<CTxOut> vout
  * - uint32_t nLockTime
+ * - uint16_t nDonationWalletIndex
  *
  * Extended transaction serialization format:
  * - int32_t nVersion
@@ -183,6 +184,7 @@ struct CMutableTransaction;
  * - if (flags & 1):
  *   - CTxWitness wit;
  * - uint32_t nLockTime
+ * - uint16_t nDonationWalletIndex
  */
 template<typename Stream, typename TxType>
 inline void UnserializeTransaction(TxType& tx, Stream& s) {
@@ -221,6 +223,7 @@ inline void UnserializeTransaction(TxType& tx, Stream& s) {
         throw std::ios_base::failure("Unknown transaction optional data");
     }
     s >> tx.nLockTime;
+    s >> tx.nDonationWalletIndex;
 }
 
 template<typename Stream, typename TxType>
@@ -250,6 +253,7 @@ inline void SerializeTransaction(const TxType& tx, Stream& s) {
         }
     }
     s << tx.nLockTime;
+    s << tx.nDonationWalletIndex;
 }
 
 
@@ -277,6 +281,7 @@ public:
     const std::vector<CTxOut> vout;
     const int32_t nVersion;
     const uint32_t nLockTime;
+    const uint16_t nDonationWalletIndex;
 
 private:
     /** Memory only. */
@@ -356,6 +361,7 @@ struct CMutableTransaction
     std::vector<CTxOut> vout;
     int32_t nVersion;
     uint32_t nLockTime;
+    uint16_t nDonationWalletIndex;
 
     CMutableTransaction();
     explicit CMutableTransaction(const CTransaction& tx);

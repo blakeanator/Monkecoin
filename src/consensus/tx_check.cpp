@@ -4,6 +4,7 @@
 
 #include <consensus/tx_check.h>
 
+#include <donationwallets.h>
 #include <primitives/transaction.h>
 #include <consensus/validation.h>
 
@@ -46,6 +47,20 @@ bool CheckTransaction(const CTransaction& tx, TxValidationState& state)
     {
         if (tx.vin[0].scriptSig.size() < 2 || tx.vin[0].scriptSig.size() > 100)
             return state.Invalid(TxValidationResult::TX_CONSENSUS, "bad-cb-length");
+
+        // Check for too many vouts
+        if (tx.vout.size() > 1 + DonationWallets::GetSize())
+            return state.Invalid(TxValidationResult::TX_CONSENSUS, "bad-cb-dw-count");
+
+        // Check for invalid addresses (skip the first vout as that is for the miner)
+        for (unsigned int i = 1; i < tx.vout.size(); i++)
+        {
+            const auto& txout = tx.vout[i];
+            if (!DonationWallets::IsAddressValid(txout.scriptPubKey))
+                return state.Invalid(TxValidationResult::TX_CONSENSUS, "bad-cb-dw-address");
+        }
+
+        // TODO: Have a summation check here for vout totals (both for miner and donation wallets)
     }
     else
     {

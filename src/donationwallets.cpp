@@ -9,7 +9,7 @@ std::vector<DonationWalletDescriptor> DonationWallets::GetActiveDonationWallets(
     std::vector<DonationWalletDescriptor> descriptors;
 
     // Go through each donation wallet (include the "all" option)
-    for (unsigned int i = 0; i < DonationWallets::GetSize(); i++)
+    for (unsigned int i = 1; i <= DonationWallets::GetSize(); i++)
     {
         // If the wallet is active
         if (donationWallets[i].active)
@@ -22,6 +22,11 @@ std::vector<DonationWalletDescriptor> DonationWallets::GetActiveDonationWallets(
 }
 
 unsigned int DonationWallets::GetSize()
+{
+    return GetSizeIncludingAll() - 1;
+}
+
+unsigned int DonationWallets::GetSizeIncludingAll()
 {
     return sizeof(donationWallets) / sizeof(donationWallets[0]);
 }

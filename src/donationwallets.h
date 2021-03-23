@@ -84,6 +84,9 @@ namespace DonationWallets
     // How many donation wallets there are
     unsigned int GetSize();
 
+    // How many donation wallets there are (incuding index zero)
+    unsigned int GetSizeIncludingAll();
+
     // Whether an address is one that belongs to a donation wallet
     bool IsAddressValid(CScript scriptPubKey);
 }

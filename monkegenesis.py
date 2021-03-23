@@ -51,16 +51,21 @@ def main():
         combined_hash_rate += u
       if combined_hash_rate > 0:
         full_cycle_time = (MAX_INT32_VALUE - options.nonce) / combined_hash_rate
-        print(str(cpu_count) + " Threads, rate: " + convert_hashrate_to_text(combined_hash_rate) + ", full cycle: " + convert_seconds_to_text(full_cycle_time), end="\r", flush=True)
+        print(str(cpu_count) + " Threads, rate: " + convert_hashrate_to_text(combined_hash_rate) + ", elapsed time: " + convert_seconds_to_text(last_updated_time - start_time) + ", est full cycle: " + convert_seconds_to_text(full_cycle_time), end="\r", flush=True)
 
   elapsed_time = time.time() - start_time
-  print("Genesis hash found in " + convert_seconds_to_text(elapsed_time))
 
   data_block = block_header[0:len(block_header) - 4] + struct.pack('<I', nonce.value)
   header_hash = hashlib.sha256(hashlib.sha256(data_block).digest()).digest()[::-1]
 
+  if last_updated_time > start_time:
+    print ("\033[K\033[F")
+
+  print("--------------------------------------------------------------------------")
   print("Hash:   0x" + codecs.encode(header_hash, 'hex').decode('ascii'))
-  print("nonce: " + str(nonce.value))
+  print("nonce:  " + str(nonce.value))
+  print("--------------------------------------------------------------------------")
+  print("Genesis hash found in " + convert_seconds_to_text(elapsed_time))
 
   for proc in processes:
     proc.terminate()
@@ -206,8 +211,8 @@ def print_block_info(options, hash_merkle_root):
   print("merkle hash: 0x"  + codecs.encode(hash_merkle_root[::-1], 'hex').decode('ascii'))
   print("pszTimestamp: "   + options.timestamp)
   print("pubkey: "         + options.pubkey)
-  print("time: "           + str(options.time))
-  print("bits: "           + str(hex(options.bits)))
+  print("time:   "           + str(options.time))
+  print("bits:   "           + str(hex(options.bits)))
 
 
 main()

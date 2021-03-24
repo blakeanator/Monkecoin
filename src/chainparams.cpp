@@ -27,7 +27,7 @@ static CBlock CreateGenesisBlock(const char* pszTimestamp, const CScript& genesi
     txNew.vin[0].scriptSig = CScript() << 486604799 << CScriptNum(4) << std::vector<unsigned char>((const unsigned char*)pszTimestamp, (const unsigned char*)pszTimestamp + strlen(pszTimestamp));
     txNew.vout[0].nValue = genesisReward;
     txNew.vout[0].scriptPubKey = genesisOutputScript;
-
+    strprintf("bla bla bla");
     CBlock genesis;
     genesis.nTime    = nTime;
     genesis.nBits    = nBits;
@@ -115,10 +115,11 @@ public:
         // For new users, the assumed disk size of the full chain state (in GB), should be updated for every release
         m_assumed_chain_state_size = 0;
 
-        genesis = CreateGenesisBlock(1616502605, 735991090, 0x1d00ffff, 1, 0 * COIN);
+        genesis = CreateGenesisBlock(1616545647, 1389566858, 0x1d00ffff, 1, 0 * COIN);
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x00000000fe0c55e0a3129895e30db610c22437a31207935d727e56cd9fa24762"));
-        assert(genesis.hashMerkleRoot == uint256S("0x7e132ba72c9a0d1d816f0f40129bdd7ffbd07a80b1f9d4a731a9d9fd15e5147d"));
+        //strprintf("%s", consensus.hashGenesisBlock.ToString().c_str());
+        assert(consensus.hashGenesisBlock == uint256S("0x000000000c4ac9bcba605083affd4f87c40f294e2407eace2184def160369520"));
+        assert(genesis.hashMerkleRoot == uint256S("0xe9ebe858a63bd9f9da0d893c4c95b96e4eaaed847cf90d2775d261497eb93904"));
 
         // Note that of those which support the service bits prefix, most only support a subset of
         // possible options.
@@ -152,13 +153,13 @@ public:
 
         checkpointData = {
             {
-                { 0, uint256S("0x00000000fe0c55e0a3129895e30db610c22437a31207935d727e56cd9fa24762")},
+                { 0, uint256S("0x000000000c4ac9bcba605083affd4f87c40f294e2407eace2184def160369520")},
             }
         };
 
         chainTxData = ChainTxData{
             // Data from RPC: getchaintxstats 4096 0000000000000000000b9d2ec5a352ecba0592946514a92f14319dc2b367fc72
-            /* nTime    */ 1616502605,
+            /* nTime    */ 1616545647,
             /* nTxCount */ 0,
             /* dTxRate  */ 0.0,
         };

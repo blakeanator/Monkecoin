@@ -7,7 +7,9 @@ def main():
 
   options = get_args()
 
-  input_script  = create_input_script(options.timestamp)
+  input_script = create_input_script(options.timestamp)
+  print("input script: " +  codecs.encode(input_script, 'hex').decode('ascii'))
+
   output_script = create_output_script(options.pubkey)
   tx = create_transaction(input_script, output_script, options)
 
@@ -89,14 +91,15 @@ def get_args():
   (options, args) = parser.parse_args()
   return options
 
+
 def create_input_script(psz_timestamp):
   psz_prefix = ""
   #use OP_PUSHDATA1 if required
   if len(psz_timestamp) > 76: psz_prefix = '4c'
 
+  #script_prefix = '04ffff001d0104' + psz_prefix + chr(len(psz_timestamp))
   script_prefix = '04ffff001d0104' + psz_prefix + codecs.encode(bytes(chr(len(psz_timestamp)), encoding='utf8'), 'hex').decode('ascii')
-  print("input script: " + script_prefix + codecs.encode(bytes(psz_timestamp, encoding='utf8'), 'hex').decode('ascii'))
-  return script_prefix + (codecs.encode(bytes(psz_timestamp, encoding='utf8'), 'hex')).decode('ascii')
+  return codecs.decode(script_prefix + codecs.encode(bytes(psz_timestamp, encoding='utf8'), 'hex').decode('ascii'), 'hex')
 
 
 def create_output_script(pubkey):
@@ -122,15 +125,13 @@ def create_transaction(input_script, output_script, options):
     "donationwalletindex" / Int16ub
   )
 
-  input_script_bytes = input_script.encode(encoding='utf_8')
-
   tx = transaction.parse(b'\x00' * (129 + len(input_script)))
   tx.version             = struct.pack('<I', 1)
   tx.num_inputs          = 1
   tx.prev_output         = struct.pack('<qqqq', 0,0,0,0)
   tx.prev_out_idx        = 0xFFFFFFFF
   tx.input_script_len    = len(input_script)
-  tx.input_script        = input_script_bytes
+  tx.input_script        = input_script
   tx.sequence            = 0xFFFFFFFF
   tx.num_outputs         = 1
   tx.out_value           = struct.pack('<q' , options.value)
@@ -211,8 +212,8 @@ def print_block_info(options, hash_merkle_root):
   print("merkle hash: 0x"  + codecs.encode(hash_merkle_root[::-1], 'hex').decode('ascii'))
   print("pszTimestamp: "   + options.timestamp)
   print("pubkey: "         + options.pubkey)
-  print("time:   "           + str(options.time))
-  print("bits:   "           + str(hex(options.bits)))
+  print("time:   "         + str(options.time))
+  print("bits:   "         + str(hex(options.bits)))
 
 
 main()

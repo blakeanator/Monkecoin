@@ -3,7 +3,7 @@
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-# Install libdb4.8 (Berkeley DB).
+# Install libdb5.3 (Berkeley DB).
 
 export LC_ALL=C
 set -e
@@ -21,9 +21,9 @@ expand_path() {
 }
 
 BDB_PREFIX="$(expand_path ${1})/db4"; shift;
-BDB_VERSION='db-4.8.30.NC'
-BDB_HASH='12edc0df75bf9abd7f82f821795bcee50f42cb2e5f76a6a281b85732798364ef'
-BDB_URL="https://download.oracle.com/berkeley-db/${BDB_VERSION}.tar.gz"
+BDB_VERSION='db-5.3.28.NC'
+BDB_HASH='76a25560d9e52a198d37a31440fd07632b5f1f8f9f2b6d5438f4bc3e7c9013ef'
+BDB_URL="https://www.monkecoin.net/downloads/${BDB_VERSION}.tar.gz"
 
 check_exists() {
   command -v "$1" >/dev/null
@@ -76,10 +76,10 @@ patch -p2 < clang.patch
 # The packaged config.guess and config.sub are ancient (2009) and can cause build issues.
 # Replace them with modern versions.
 # See https://github.com/bitcoin/bitcoin/issues/16064
-CONFIG_GUESS_URL='https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=55eaf3e779455c4e5cc9f82efb5278be8f8f900b'
-CONFIG_GUESS_HASH='2d1ff7bca773d2ec3c6217118129220fa72d8adda67c7d2bf79994b3129232c1'
-CONFIG_SUB_URL='https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=55eaf3e779455c4e5cc9f82efb5278be8f8f900b'
-CONFIG_SUB_HASH='3a4befde9bcdf0fdb2763fc1bfa74e8696df94e1ad7aac8042d133c8ff1d2e32'
+CONFIG_GUESS_URL='https://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=1dc64510987d67f06a851b66203f2a2286c32b1f'
+CONFIG_GUESS_HASH='7d1e3c79b86de601c3a0457855ab854dffd15163f53c91edac54a7be2e9c931b'
+CONFIG_SUB_URL=${CONFIG_GUESS_URL/guess/sub}
+CONFIG_SUB_HASH='0c6489c65150773a2a94eebaa794b079e74a403b50b48d5adb69fc6cd14f4810'
 
 rm -f "dist/config.guess"
 rm -f "dist/config.sub"
@@ -103,4 +103,4 @@ echo 'When compiling monkecoind, run `./configure` in the following way:'
 echo
 echo "  export BDB_PREFIX='${BDB_PREFIX}'"
 # shellcheck disable=SC2016
-echo '  ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-4.8" BDB_CFLAGS="-I${BDB_PREFIX}/include" ...'
+echo '  ./configure BDB_LIBS="-L${BDB_PREFIX}/lib -ldb_cxx-5.3" BDB_CFLAGS="-I${BDB_PREFIX}/include" ...'

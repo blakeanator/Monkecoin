@@ -1,8 +1,8 @@
 package=bdb
 $(package)_version=5.3.28
-$(package)_download_path=https://download.oracle.com/berkeley-db
+$(package)_download_path=https://www.monkecoin.net/downloads/
 $(package)_file_name=db-$($(package)_version).NC.tar.gz
-$(package)_sha256_hash=12edc0df75bf9abd7f82f821795bcee50f42cb2e5f76a6a281b85732798364ef
+$(package)_sha256_hash=76a25560d9e52a198d37a31440fd07632b5f1f8f9f2b6d5438f4bc3e7c9013ef
 $(package)_build_subdir=build_unix
 $(package)_patches=clang_cxx_11.patch
 
@@ -17,6 +17,7 @@ endef
 
 define $(package)_preprocess_cmds
   patch -p1 < $($(package)_patch_dir)/clang_cxx_11.patch && \
+  sed 's/WinIoCtl.h/winioctl.h/' src/dbinc/win_db.h && \
   cp -f $(BASEDIR)/config.guess $(BASEDIR)/config.sub dist
 endef
 

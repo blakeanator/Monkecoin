@@ -6,7 +6,7 @@
 
 DonationWalletModel::DonationWalletModel(QObject *parent) : QAbstractListModel(parent)
 {
-    activeDonationWallets = DonationWallets::GetActiveDonationWallets();
+    activeDonationWallets = DonationWallets::GetActiveDonationWallets(true);
 }
 
 QVariant DonationWalletModel::data(const QModelIndex &index, int role) const

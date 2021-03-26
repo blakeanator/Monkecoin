@@ -4,12 +4,12 @@
 
 #include <donationwallets.h>
 
-std::vector<DonationWalletDescriptor> DonationWallets::GetActiveDonationWallets()
+std::vector<DonationWalletDescriptor> DonationWallets::GetActiveDonationWallets(bool IncludeAllWallet)
 {
     std::vector<DonationWalletDescriptor> descriptors;
 
     // Go through each donation wallet (include the "all" option)
-    for (unsigned int i = 1; i <= DonationWallets::GetSize(); i++)
+    for (unsigned int i = 0; i < DonationWallets::GetSize(); i++)
     {
         // If the wallet is active
         if (donationWallets[i].active)
@@ -18,17 +18,26 @@ std::vector<DonationWalletDescriptor> DonationWallets::GetActiveDonationWallets(
         }
     }
 
+    if (!IncludeAllWallet)
+    {
+        // Remove the "All" wallet
+        descriptors.erase(descriptors.begin());
+    }
+
     return descriptors;
 }
 
-unsigned int DonationWallets::GetSize()
+unsigned int DonationWallets::GetSize(bool IncludeAllWallet)
 {
-    return GetSizeIncludingAll() - 1;
-}
+    unsigned int size = sizeof(donationWallets) / sizeof(donationWallets[0]);
 
-unsigned int DonationWallets::GetSizeIncludingAll()
-{
-    return sizeof(donationWallets) / sizeof(donationWallets[0]);
+    if (!IncludeAllWallet)
+    {
+        // Remove the "All" wallet
+        size--;
+    }
+
+    return size;
 }
 
 bool DonationWallets::IsAddressValid(CScript scriptPubKey)

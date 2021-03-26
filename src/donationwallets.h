@@ -79,13 +79,10 @@ static DonationWalletDescriptor donationWallets[] = {
 
 namespace DonationWallets
 {
-    std::vector<DonationWalletDescriptor> GetActiveDonationWallets();
+    std::vector<DonationWalletDescriptor> GetActiveDonationWallets(bool IncludeAllWallet = false);
 
     // How many donation wallets there are
-    unsigned int GetSize();
-
-    // How many donation wallets there are (incuding index zero)
-    unsigned int GetSizeIncludingAll();
+    unsigned int GetSize(bool IncludeAllWallet = false);
 
     // Whether an address is one that belongs to a donation wallet
     bool IsAddressValid(CScript scriptPubKey);

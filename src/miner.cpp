@@ -167,19 +167,19 @@ std::unique_ptr<CBlockTemplate> BlockAssembler::CreateNewBlock(const CScript& sc
     if (HasMintableCoinRemainingInSupply(nHeight, chainparams.GetConsensus()))
     {
         // Get the active donation wallets
-        std::vector<DonationWalletDescriptor> donationWallets = DonationWallets::GetActiveDonationWallets();
-        int numberOfDonationWallets = donationWallets.size();
+        std::vector<DonationWalletDescriptor> activeDonationWallets = DonationWallets::GetActiveDonationWallets();
+        int numberOfDonationWallets = activeDonationWallets.size();
 
         // Add the donation wallets to the coinbase transaction
         coinbaseTx.vout.resize(1 + numberOfDonationWallets);
 
         // Add an evenly distributed minted coin amount between the donation wallets
-        for (int i = 0; i <= numberOfDonationWallets; i++)
+        for (int i = 0; i < numberOfDonationWallets; i++)
         {
             //CTxDestination bla;// = 
             //CScript bla2;// = GetScriptForDestination();
 
-            coinbaseTx.vout[i].scriptPubKey = donationWallets[i].GetCurrentPubKey();
+            coinbaseTx.vout[i].scriptPubKey = activeDonationWallets[i].GetCurrentPubKey();
             coinbaseTx.vout[i].nValue = GetBlockDonationSubsidy(nHeight, chainparams.GetConsensus()) / numberOfDonationWallets;
         }
     }

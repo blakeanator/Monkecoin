@@ -70,7 +70,7 @@ const uint160 R1S = uint160(std::vector<unsigned char>(test,test+20));
    blocks' transactions.
 */
 static DonationWalletDescriptor donationWallets[] = {
-    {1, "All", ""/*, {{0, ""}}*/}//,
+    {true, "All", ""/*, {{0, ""}}*/}//,
     //{1, "Test", "http://www.test.com", {{0, "pEkRA9HiCLRfqVZ7RYt2r2Ppnr97952MQ2"}}},
     //{1, "Google", "https://www.google.com", {{0, "pEkRA9HiCLRfqVZ7RYt2r2Ppnr97952MQ2"}}}
     //{"020000000000000000000000000000000000000000000000000000000000000000", "Some Non-profit", "www.google.com", 1}

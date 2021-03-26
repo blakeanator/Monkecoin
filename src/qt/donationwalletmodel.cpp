@@ -33,5 +33,5 @@ QString DonationWalletModel::GetWebsite(int index) const
 int DonationWalletModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return DonationWallets::GetActiveDonationWallets().size();
+    return activeDonationWallets.size();
 }

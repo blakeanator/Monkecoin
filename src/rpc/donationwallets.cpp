@@ -173,7 +173,7 @@ static UniValue getdonationwallets(const JSONRPCRequest& request)
     UniValue result(UniValue::VARR);
 
     // Go through all the donation wallets (skip the first index)
-    for (unsigned int i = 1; i < DonationWallets::GetSize(); i++)
+    for (unsigned int i = 1; i < DonationWallets::GetSize(true); i++)
     {
         const DonationWalletDescriptor& wallet = donationWallets[i];
 

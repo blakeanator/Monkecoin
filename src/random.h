@@ -201,6 +201,9 @@ public:
     /** Generate random bytes. */
     std::vector<unsigned char> randbytes(size_t len);
 
+    /** Generate a random 16-bit integer. */
+    uint16_t rand16() noexcept { return randbits(16); }
+
     /** Generate a random 32-bit integer. */
     uint32_t rand32() noexcept { return randbits(32); }
 

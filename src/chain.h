@@ -174,7 +174,7 @@ public:
     uint32_t nStatus{0};
 
     //! block header
-    int32_t nVersion{0};
+    uint16_t nVersion{0};
     uint256 hashMerkleRoot{};
     uint32_t nTime{0};
     uint32_t nBits{0};
@@ -332,8 +332,8 @@ public:
 
     SERIALIZE_METHODS(CDiskBlockIndex, obj)
     {
-        int _nVersion = s.GetVersion();
-        if (!(s.GetType() & SER_GETHASH)) READWRITE(VARINT_MODE(_nVersion, VarIntMode::NONNEGATIVE_SIGNED));
+        uint16_t _nVersion = s.GetVersion();
+        if (!(s.GetType() & SER_GETHASH)) READWRITE(_nVersion);
 
         READWRITE(VARINT_MODE(obj.nHeight, VarIntMode::NONNEGATIVE_SIGNED));
         READWRITE(VARINT(obj.nStatus));

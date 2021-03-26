@@ -447,17 +447,17 @@ class RawTransactionsTest(MonkecoinTestFramework):
         # Test the minimum transaction version number that fits in a signed 32-bit integer.
         # As transaction version is unsigned, this should convert to its unsigned equivalent.
         tx = CTransaction()
-        tx.nVersion = -0x80000000
+        tx.nVersion = -0x8000
         rawtx = ToHex(tx)
         decrawtx = self.nodes[0].decoderawtransaction(rawtx)
-        assert_equal(decrawtx['version'], 0x80000000)
+        assert_equal(decrawtx['version'], 0x8000)
 
         # Test the maximum transaction version number that fits in a signed 32-bit integer.
         tx = CTransaction()
-        tx.nVersion = 0x7fffffff
+        tx.nVersion = 0x7fff
         rawtx = ToHex(tx)
         decrawtx = self.nodes[0].decoderawtransaction(rawtx)
-        assert_equal(decrawtx['version'], 0x7fffffff)
+        assert_equal(decrawtx['version'], 0x7fff)
 
         self.log.info('sendrawtransaction/testmempoolaccept with maxfeerate')
 

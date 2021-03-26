@@ -97,7 +97,6 @@ def create_input_script(psz_timestamp):
   #use OP_PUSHDATA1 if required
   if len(psz_timestamp) > 76: psz_prefix = '4c'
 
-  #script_prefix = '04ffff001d0104' + psz_prefix + chr(len(psz_timestamp))
   script_prefix = '04ffff001d0104' + psz_prefix + codecs.encode(bytes(chr(len(psz_timestamp)), encoding='utf8'), 'hex').decode('ascii')
   return codecs.decode(script_prefix + codecs.encode(bytes(psz_timestamp, encoding='utf8'), 'hex').decode('ascii'), 'hex')
 
@@ -110,7 +109,7 @@ def create_output_script(pubkey):
 
 def create_transaction(input_script, output_script, options):
   transaction = Struct(
-    "version" / Bytes(4),
+    "version" / Bytes(2),
     "num_inputs" / Byte,
     "prev_output" / Bytes(32),
     "prev_out_idx" / Int32ub,
@@ -125,8 +124,8 @@ def create_transaction(input_script, output_script, options):
     "donationwalletindex" / Int16ub
   )
 
-  tx = transaction.parse(b'\x00' * (129 + len(input_script)))
-  tx.version             = struct.pack('<I', 1)
+  tx = transaction.parse(b'\x00' * (127 + len(input_script)))
+  tx.version             = struct.pack('<H', 1)
   tx.num_inputs          = 1
   tx.prev_output         = struct.pack('<qqqq', 0,0,0,0)
   tx.prev_out_idx        = 0xFFFFFFFF
@@ -144,7 +143,7 @@ def create_transaction(input_script, output_script, options):
 
 def create_block_header(hash_merkle_root, time, bits, nonce):
   block_header = Struct(
-    "version" / Bytes(4),
+    "version" / Bytes(2),
     "hash_prev_block" / Bytes(32),
     "hash_merkle_root" / Bytes(32),
     "time" / Bytes(4),
@@ -152,8 +151,8 @@ def create_block_header(hash_merkle_root, time, bits, nonce):
     "nonce" / Bytes(4)
   )
 
-  genesisblock = block_header.parse(b'\x00' * 80)
-  genesisblock.version          = struct.pack('<I', 1)
+  genesisblock = block_header.parse(b'\x00' * 78)
+  genesisblock.version          = struct.pack('<H', 1)
   genesisblock.hash_prev_block  = struct.pack('<qqqq', 0,0,0,0)
   genesisblock.hash_merkle_root = hash_merkle_root
   genesisblock.time             = struct.pack('<I', time)

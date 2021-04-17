@@ -17,13 +17,20 @@ base_blob<BITS>::base_blob(const std::vector<unsigned char>& vch)
 }
 
 template <unsigned int BITS>
-std::string base_blob<BITS>::GetHex() const
+std::string base_blob<BITS>::GetHex(bool Reversed) const
 {
-    uint8_t m_data_rev[WIDTH];
-    for (int i = 0; i < WIDTH; ++i) {
-        m_data_rev[i] = m_data[WIDTH - 1 - i];
+    if (Reversed)
+    {
+        uint8_t m_data_rev[WIDTH];
+
+        for (int i = 0; i < WIDTH; ++i) {
+            m_data_rev[i] = m_data[WIDTH - 1 - i];
+        }
+
+        return HexStr(m_data_rev);
     }
-    return HexStr(m_data_rev);
+
+    return HexStr(m_data);
 }
 
 template <unsigned int BITS>
@@ -39,16 +46,26 @@ void base_blob<BITS>::SetHex(const char* psz)
     if (psz[0] == '0' && ToLower(psz[1]) == 'x')
         psz += 2;
 
-    // hex string to uint
     size_t digits = 0;
+
+    // count the digits
     while (::HexDigit(psz[digits]) != -1)
         digits++;
+
+    // begining and end pointers
     unsigned char* p1 = (unsigned char*)m_data;
     unsigned char* pend = p1 + WIDTH;
+
+    // While digits remain and the moving p1 pointer has not exceeded the pend pointer
     while (digits > 0 && p1 < pend) {
+
         *p1 = ::HexDigit(psz[--digits]);
+
         if (digits > 0) {
+
             *p1 |= ((unsigned char)::HexDigit(psz[--digits]) << 4);
+
+            // Increment the p1 pointer
             p1++;
         }
     }
@@ -68,14 +85,14 @@ std::string base_blob<BITS>::ToString() const
 
 // Explicit instantiations for base_blob<160>
 template base_blob<160>::base_blob(const std::vector<unsigned char>&);
-template std::string base_blob<160>::GetHex() const;
+template std::string base_blob<160>::GetHex(bool) const;
 template std::string base_blob<160>::ToString() const;
 template void base_blob<160>::SetHex(const char*);
 template void base_blob<160>::SetHex(const std::string&);
 
 // Explicit instantiations for base_blob<256>
 template base_blob<256>::base_blob(const std::vector<unsigned char>&);
-template std::string base_blob<256>::GetHex() const;
+template std::string base_blob<256>::GetHex(bool) const;
 template std::string base_blob<256>::ToString() const;
 template void base_blob<256>::SetHex(const char*);
 template void base_blob<256>::SetHex(const std::string&);

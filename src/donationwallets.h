@@ -70,8 +70,17 @@ const uint160 R1S = uint160(std::vector<unsigned char>(test,test+20));
    blocks' transactions.
 */
 static DonationWalletDescriptor donationWallets[] = {
-    {true, "All", ""/*, {{0, ""}}*/}//,
-    //{1, "Test", "http://www.test.com", {{0, "pEkRA9HiCLRfqVZ7RYt2r2Ppnr97952MQ2"}}},
+    {true, "All", ""/*, {{0, ""}}*/},
+    {true, "Direct Relief", "https://www.directrelief.org"},
+    {true, "Doctors Without Borders", "https://www.doctorswithoutborders.org"},
+    {true, "Gift of Adoption Fund", "https://giftofadoption.org"},
+    {true, "Gorilla Doctors", "https://www.gorilladoctors.org"},
+    {true, "The Jane Goodall Foundation", "https://www.janegoodall.org"},
+    {true, "Ocean Conservancy", "https://oceanconservancy.org"},
+    {true, "One Tree Planted", "https://onetreeplanted.org"},
+    {true, "Save the Children", "https://www.savethechildren.org"},
+    {true, "Thorn", "https://www.thorn.org"},
+    {true, "Wildlife Warriors", "https://www.wildlifewarriors.org.au"},
     //{1, "Google", "https://www.google.com", {{0, "pEkRA9HiCLRfqVZ7RYt2r2Ppnr97952MQ2"}}}
     //{"020000000000000000000000000000000000000000000000000000000000000000", "Some Non-profit", "www.google.com", 1}
     //{uint256S("0x020000000000000000000000000000000000000000000000000000000000000000"), "Some Non-profit", "www.google.com", 1}

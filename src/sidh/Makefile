@@ -206,7 +206,7 @@ $(SHA3_OBJECT): src/sha3/fips202.c
 #	$(AR) $@ $^
 #	$(RANLIB) $@
 	
-$(LIB): $(OBJECTS_434)
+$(LIB): $(OBJECTS_751_COMP)
 	rm -rf .libs
 	mkdir .libs
 	$(AR) $@ $^

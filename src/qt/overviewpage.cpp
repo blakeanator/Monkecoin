@@ -186,9 +186,9 @@ void OverviewPage::donationChanged(int idx)
     if (websiteName.substr(0, https.length()) == https)
          websiteName.erase(0, https.length());
 
-    //std::string www = "www.";
-    //if (websiteName.substr(0, www.length()) == www)
-    //     websiteName.erase(0, www.length());
+    std::string www = "www.";
+    if (websiteName.substr(0, www.length()) == www)
+         websiteName.erase(0, www.length());
 
     std::string websiteString = "<a href=\"" + model->GetWebsite(idx).toStdString() + "\">" + websiteName + "</a>";
 

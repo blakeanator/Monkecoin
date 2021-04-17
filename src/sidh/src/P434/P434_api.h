@@ -6,10 +6,6 @@
 
 #ifndef P434_API_H
 #define P434_API_H
-    
-#ifdef __cplusplus
-extern "C" {
-#endif 
 
 /*********************** Key encapsulation mechanism API ***********************/
 
@@ -106,9 +102,5 @@ int EphemeralSecretAgreement_B_SIDHp434(const unsigned char* PrivateKeyB, const 
 // Alice's and Bob's private keys are encoded in 27 and 28 octets, resp., in little endian format. 
 // Public keys PublicKeyA and PublicKeyB consist of 3 elements in GF(p434^2). In the SIDH API, they are encoded in 330 octets. 
 // Shared keys SharedSecretA and SharedSecretB consist of one element in GF(p434^2). In the SIDH API, they are encoded in 110 octets.
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

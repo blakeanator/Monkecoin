@@ -77,7 +77,7 @@ def get_args():
   parser = optparse.OptionParser()
   parser.add_option("-t", "--time", dest="time", default=int(time.time()), 
                    type="int", help="the (unix) time when the genesisblock is created")
-  parser.add_option("-z", "--timestamp", dest="timestamp", default="FOX Business 02/10/2021 Elon Musk says he bought Dogecoin for son 'so he can be a toddler hodler'",
+  parser.add_option("-z", "--timestamp", dest="timestamp", default="CNN 04/09/2021 Elon Musk's Neuralink claims monkeys can play Pong using just their minds",
                    type="string", help="the pszTimestamp found in the coinbase of the genesisblock")
   parser.add_option("-n", "--nonce", dest="nonce", default=0,
                    type="int", help="the first value of the nonce that will be incremented when searching the genesis hash")

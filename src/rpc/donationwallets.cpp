@@ -266,17 +266,18 @@ static UniValue donationtest(const JSONRPCRequest& request)
                 },
             }.ToString());
 
-    uint8_t privateKey[374] = "";
-    uint8_t publicKey[330]=  "";
-    //unsigned char pk[330]=  "";
-    //unsigned char pk[374] = "";
-    int i = crypto_kem_keypair_SIKEp434(publicKey, privateKey);
+    //uint8_t privateKey[644] = "";
+    //uint8_t publicKey[564]=  "";
+    //int i = crypto_kem_keypair_SIKEp751(publicKey, privateKey);
+    uint8_t privateKey[602]=  "";
+    uint8_t publicKey[335] = "";
+    int i = crypto_kem_keypair_SIKEp751_compressed(publicKey, privateKey);
 
     //std::vector<uint8_t> prikv(privateKey, privateKey + 374);
     //std::string prikvs = HexStr(prikv);
     //std::string prikvs = HexStr(Span<uint8_t>(privateKey, privateKey + 374));
 
-    std::vector<uint8_t> pubkv(publicKey, publicKey + 330);
+    std::vector<uint8_t> pubkv(publicKey, publicKey + 335);
     std::string pubkvs = HexStr(pubkv);
 
     std::string result = "SIDH (" + std::to_string(i) + ")\nprivate: " + HexStr(MakeUCharSpan(privateKey)) + "\npublic: " + pubkvs;
@@ -300,20 +301,49 @@ static UniValue donationtest2(const JSONRPCRequest& request)
                 },
             }.ToString());
 
-        
-    /*uint8_t test[0] = {};
+    std::string bla = "";
 
+    uint8_t test[0] = {};
     CSHA256 sha = CSHA256();
     sha.Write(test, 0);
     unsigned char buf[CSHA256::OUTPUT_SIZE];
     sha.Finalize(buf);
-    return UniValue(HexStr(MakeUCharSpan(buf)));*/
+    bla += "SHA256 (to buf): " + HexStr(MakeUCharSpan(buf));
+
+    uint8_t o0 = buf[0];
+    bla += "\nFirst: " + std::to_string(o0);
+
+    CSHA256 sha2 = CSHA256();
+    sha2.Write(test, 0);
+    uint256 result;
+    sha2.Finalize(result.begin());
+    bla += "\nSHA256 (to int): " + result.GetHex(false);
+
+    uint8_t o1 = *result.data();
+    bla += "\nFirst: " + std::to_string(o1);
+
+    result.SetHex(HexStr(MakeUCharSpan(buf)));
+    bla += "\nSHA256 (fo hex): " + result.GetHex(false);
+
+    uint8_t o2 = *result.data();
+    bla += "\nFirst: " + std::to_string(o2);
+
+    //strncat(bla, &o, 1);
+
+    //uint256 resultbla2;
+    //CHash256().Write(test, 0).Finalize(resultbla2);
+    //bla += "\nSHA256 (2): " + resultbla2.GetHex();
+    Span<uint8_t> test2(test, 0);
+    bla += "\nSHA256 (4): " + Hash(test2).GetHex();
 
 
 
 
+    bla += "\nempty: " + std::to_string(test2.empty()) + " size: " + std::to_string(test2.size());
 
+    return UniValue(bla);
 
+/*
     std::string s = "monke";
     std::vector<uint8_t> test2(s.begin(), s.end());
 
@@ -325,14 +355,14 @@ static UniValue donationtest2(const JSONRPCRequest& request)
     SHA3_256 sha = SHA3_256();
     sha.Write(test2);
     sha.Finalize(output);
-
+*/
     //std::vector<uint8_t> test3(output, output + SHA3_256::OUTPUT_SIZE);
     //std::vector<uint8_t> test3;
     //test3.insert(test3.begin(), std::end(output), std::begin(output));
     //uint256 test4 = uint256(test3);
     //return UniValue(test4.GetHex());
 
-    return UniValue(HexStr(MakeUCharSpan(output)));
+    //return UniValue(HexStr(MakeUCharSpan(output)));
     //return UniValue(HexStr(output));
 }
 

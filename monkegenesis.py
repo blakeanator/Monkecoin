@@ -13,8 +13,8 @@ def main():
   output_script = create_output_script(options.pubkey)
   tx = create_transaction(input_script, output_script, options)
 
-  # hash merkle root is the double sha256 hash of the transaction(s) 
-  hash_merkle_root = hashlib.sha256(hashlib.sha256(tx).digest()).digest()
+  # hash merkle root is the sha3 hash of the transaction(s) 
+  hash_merkle_root = hashlib.sha3_256(tx).digest()
 
   print_block_info(options, hash_merkle_root)
   block_header = create_block_header(hash_merkle_root, options.time, options.bits, options.nonce)
@@ -58,7 +58,7 @@ def main():
   elapsed_time = time.time() - start_time
 
   data_block = block_header[0:len(block_header) - 4] + struct.pack('<I', nonce.value)
-  header_hash = hashlib.sha256(hashlib.sha256(data_block).digest()).digest()[::-1]
+  header_hash = hashlib.sha3_256(data_block).digest()[::-1]
 
   if last_updated_time > start_time:
     print ("\033[K\033[F")
@@ -169,7 +169,7 @@ def generate_hash(data_block, start_nonce, end_nonce, bits, target, global_hash_
   last_hashrate   = 0
 
   while try_nonce <= end_nonce:
-    header_hash = hashlib.sha256(hashlib.sha256(data_block).digest()).digest()[::-1]
+    header_hash = hashlib.sha3_256(data_block).digest()[::-1]
     now = time.time()
     if now >= last_updated + 1:
       last_hashrate = try_nonce - last_nonce

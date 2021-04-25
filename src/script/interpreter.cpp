@@ -1363,57 +1363,57 @@ public:
     }
 };
 
-/** Compute the (single) SHA256 of the concatenation of all prevouts of a tx. */
+/** Compute the SHA3 of the concatenation of all prevouts of a tx. */
 template <class T>
-uint256 GetPrevoutsSHA256(const T& txTo)
+uint256 GetPrevoutsSHA3(const T& txTo)
 {
     CHashWriter ss(SER_GETHASH, 0);
     for (const auto& txin : txTo.vin) {
         ss << txin.prevout;
     }
-    return ss.GetSHA256();
+    return ss.GetHash();
 }
 
-/** Compute the (single) SHA256 of the concatenation of all nSequences of a tx. */
+/** Compute the SHA3 of the concatenation of all nSequences of a tx. */
 template <class T>
-uint256 GetSequencesSHA256(const T& txTo)
+uint256 GetSequencesSHA3(const T& txTo)
 {
     CHashWriter ss(SER_GETHASH, 0);
     for (const auto& txin : txTo.vin) {
         ss << txin.nSequence;
     }
-    return ss.GetSHA256();
+    return ss.GetHash();
 }
 
-/** Compute the (single) SHA256 of the concatenation of all txouts of a tx. */
+/** Compute the SHA3 of the concatenation of all txouts of a tx. */
 template <class T>
-uint256 GetOutputsSHA256(const T& txTo)
+uint256 GetOutputsSHA3(const T& txTo)
 {
     CHashWriter ss(SER_GETHASH, 0);
     for (const auto& txout : txTo.vout) {
         ss << txout;
     }
-    return ss.GetSHA256();
+    return ss.GetHash();
 }
 
-/** Compute the (single) SHA256 of the concatenation of all amounts spent by a tx. */
-uint256 GetSpentAmountsSHA256(const std::vector<CTxOut>& outputs_spent)
+/** Compute the SHA3 of the concatenation of all amounts spent by a tx. */
+uint256 GetSpentAmountsSHA3(const std::vector<CTxOut>& outputs_spent)
 {
     CHashWriter ss(SER_GETHASH, 0);
     for (const auto& txout : outputs_spent) {
         ss << txout.nValue;
     }
-    return ss.GetSHA256();
+    return ss.GetHash();
 }
 
-/** Compute the (single) SHA256 of the concatenation of all scriptPubKeys spent by a tx. */
-uint256 GetSpentScriptsSHA256(const std::vector<CTxOut>& outputs_spent)
+/** Compute the SHA3 of the concatenation of all scriptPubKeys spent by a tx. */
+uint256 GetSpentScriptsSHA3(const std::vector<CTxOut>& outputs_spent)
 {
     CHashWriter ss(SER_GETHASH, 0);
     for (const auto& txout : outputs_spent) {
         ss << txout.scriptPubKey;
     }
-    return ss.GetSHA256();
+    return ss.GetHash();
 }
 
 
@@ -1454,19 +1454,19 @@ void PrecomputedTransactionData::Init(const T& txTo, std::vector<CTxOut>&& spent
 
     if (uses_bip143_segwit || uses_bip341_taproot) {
         // Computations shared between both sighash schemes.
-        m_prevouts_single_hash = GetPrevoutsSHA256(txTo);
-        m_sequences_single_hash = GetSequencesSHA256(txTo);
-        m_outputs_single_hash = GetOutputsSHA256(txTo);
+        m_prevouts_single_hash = GetPrevoutsSHA3(txTo);
+        m_sequences_single_hash = GetSequencesSHA3(txTo);
+        m_outputs_single_hash = GetOutputsSHA3(txTo);
     }
     if (uses_bip143_segwit) {
-        hashPrevouts = SHA256Uint256(m_prevouts_single_hash);
-        hashSequence = SHA256Uint256(m_sequences_single_hash);
-        hashOutputs = SHA256Uint256(m_outputs_single_hash);
+        hashPrevouts = SHA3Uint256(m_prevouts_single_hash);
+        hashSequence = SHA3Uint256(m_sequences_single_hash);
+        hashOutputs = SHA3Uint256(m_outputs_single_hash);
         m_bip143_segwit_ready = true;
     }
     if (uses_bip341_taproot) {
-        m_spent_amounts_single_hash = GetSpentAmountsSHA256(m_spent_outputs);
-        m_spent_scripts_single_hash = GetSpentScriptsSHA256(m_spent_outputs);
+        m_spent_amounts_single_hash = GetSpentAmountsSHA3(m_spent_outputs);
+        m_spent_scripts_single_hash = GetSpentScriptsSHA3(m_spent_outputs);
         m_bip341_taproot_ready = true;
     }
 }
@@ -1557,7 +1557,7 @@ bool SignatureHashSchnorr(uint256& hash_out, const ScriptExecutionData& execdata
         if (in_pos >= tx_to.vout.size()) return false;
         CHashWriter sha_single_output(SER_GETHASH, 0);
         sha_single_output << tx_to.vout[in_pos];
-        ss << sha_single_output.GetSHA256();
+        ss << sha_single_output.GetHash();
     }
 
     // Additional data for BIP 342 signatures
@@ -1569,7 +1569,7 @@ bool SignatureHashSchnorr(uint256& hash_out, const ScriptExecutionData& execdata
         ss << execdata.m_codeseparator_pos;
     }
 
-    hash_out = ss.GetSHA256();
+    hash_out = ss.GetHash();
     return true;
 }
 
@@ -1585,16 +1585,16 @@ uint256 SignatureHash(const CScript& scriptCode, const T& txTo, unsigned int nIn
         const bool cacheready = cache && cache->m_bip143_segwit_ready;
 
         if (!(nHashType & SIGHASH_ANYONECANPAY)) {
-            hashPrevouts = cacheready ? cache->hashPrevouts : SHA256Uint256(GetPrevoutsSHA256(txTo));
+            hashPrevouts = cacheready ? cache->hashPrevouts : SHA3Uint256(GetPrevoutsSHA3(txTo));
         }
 
         if (!(nHashType & SIGHASH_ANYONECANPAY) && (nHashType & 0x1f) != SIGHASH_SINGLE && (nHashType & 0x1f) != SIGHASH_NONE) {
-            hashSequence = cacheready ? cache->hashSequence : SHA256Uint256(GetSequencesSHA256(txTo));
+            hashSequence = cacheready ? cache->hashSequence : SHA3Uint256(GetSequencesSHA3(txTo));
         }
 
 
         if ((nHashType & 0x1f) != SIGHASH_SINGLE && (nHashType & 0x1f) != SIGHASH_NONE) {
-            hashOutputs = cacheready ? cache->hashOutputs : SHA256Uint256(GetOutputsSHA256(txTo));
+            hashOutputs = cacheready ? cache->hashOutputs : SHA3Uint256(GetOutputsSHA3(txTo));
         } else if ((nHashType & 0x1f) == SIGHASH_SINGLE && nIn < txTo.vout.size()) {
             CHashWriter ss(SER_GETHASH, 0);
             ss << txTo.vout[nIn];
@@ -1836,7 +1836,7 @@ static bool VerifyTaprootCommitment(const std::vector<unsigned char>& control, c
     const int path_len = (control.size() - TAPROOT_CONTROL_BASE_SIZE) / TAPROOT_CONTROL_NODE_SIZE;
     const XOnlyPubKey p{uint256(std::vector<unsigned char>(control.begin() + 1, control.begin() + TAPROOT_CONTROL_BASE_SIZE))};
     const XOnlyPubKey q{uint256(program)};
-    tapleaf_hash = (CHashWriter(HASHER_TAPLEAF) << uint8_t(control[0] & TAPROOT_LEAF_MASK) << script).GetSHA256();
+    tapleaf_hash = (CHashWriter(HASHER_TAPLEAF) << uint8_t(control[0] & TAPROOT_LEAF_MASK) << script).GetHash();
     uint256 k = tapleaf_hash;
     for (int i = 0; i < path_len; ++i) {
         CHashWriter ss_branch{HASHER_TAPBRANCH};
@@ -1846,9 +1846,9 @@ static bool VerifyTaprootCommitment(const std::vector<unsigned char>& control, c
         } else {
             ss_branch << node << k;
         }
-        k = ss_branch.GetSHA256();
+        k = ss_branch.GetHash();
     }
-    k = (CHashWriter(HASHER_TAPTWEAK) << MakeSpan(p) << k).GetSHA256();
+    k = (CHashWriter(HASHER_TAPTWEAK) << MakeSpan(p) << k).GetHash();
     return q.CheckPayToContract(p, k, control[0] & 1);
 }
 
@@ -1867,7 +1867,7 @@ static bool VerifyWitnessProgram(const CScriptWitness& witness, int witversion, 
             const valtype& script_bytes = SpanPopBack(stack);
             exec_script = CScript(script_bytes.begin(), script_bytes.end());
             uint256 hash_exec_script;
-            CSHA256().Write(&exec_script[0], exec_script.size()).Finalize(hash_exec_script.begin());
+            SHA3_256().Write(exec_script).Finalize(hash_exec_script);
             if (memcmp(hash_exec_script.begin(), program.data(), 32)) {
                 return set_error(serror, SCRIPT_ERR_WITNESS_PROGRAM_MISMATCH);
             }
@@ -1889,7 +1889,7 @@ static bool VerifyWitnessProgram(const CScriptWitness& witness, int witversion, 
         if (stack.size() >= 2 && !stack.back().empty() && stack.back()[0] == ANNEX_TAG) {
             // Drop annex (this is non-standard; see IsWitnessStandard)
             const valtype& annex = SpanPopBack(stack);
-            execdata.m_annex_hash = (CHashWriter(SER_GETHASH, 0) << annex).GetSHA256();
+            execdata.m_annex_hash = (CHashWriter(SER_GETHASH, 0) << annex).GetHash();
             execdata.m_annex_present = true;
         } else {
             execdata.m_annex_present = false;

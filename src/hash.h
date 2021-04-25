@@ -10,6 +10,7 @@
 #include <crypto/common.h>
 #include <crypto/ripemd160.h>
 #include <crypto/sha256.h>
+#include <crypto/sha3.h>
 #include <prevector.h>
 #include <serialize.h>
 #include <uint256.h>
@@ -20,22 +21,20 @@
 
 typedef uint256 ChainCode;
 
-/** A hasher class for Monkecoin's 256-bit hash (double SHA-256). */
+/** A hasher class for Monkecoin's 256-bit hash (single SHA-3). */
 class CHash256 {
 private:
-    CSHA256 sha;
+    SHA3_256 sha;
 public:
-    static const size_t OUTPUT_SIZE = CSHA256::OUTPUT_SIZE;
+    static const size_t OUTPUT_SIZE = SHA3_256::OUTPUT_SIZE;
 
     void Finalize(Span<unsigned char> output) {
         assert(output.size() == OUTPUT_SIZE);
-        unsigned char buf[CSHA256::OUTPUT_SIZE];
-        sha.Finalize(buf);
-        sha.Reset().Write(buf, CSHA256::OUTPUT_SIZE).Finalize(output.data());
+        sha.Finalize(output);
     }
 
     CHash256& Write(Span<const unsigned char> input) {
-        sha.Write(input.data(), input.size());
+        sha.Write(input);
         return *this;
     }
 
@@ -45,22 +44,22 @@ public:
     }
 };
 
-/** A hasher class for Monkecoin's 160-bit hash (SHA-256 + RIPEMD-160). */
+/** A hasher class for Monkecoin's 160-bit hash (SHA-3 + RIPEMD-160). */
 class CHash160 {
 private:
-    CSHA256 sha;
+    SHA3_256 sha;
 public:
     static const size_t OUTPUT_SIZE = CRIPEMD160::OUTPUT_SIZE;
 
     void Finalize(Span<unsigned char> output) {
         assert(output.size() == OUTPUT_SIZE);
-        unsigned char buf[CSHA256::OUTPUT_SIZE];
+        unsigned char buf[SHA3_256::OUTPUT_SIZE];
         sha.Finalize(buf);
-        CRIPEMD160().Write(buf, CSHA256::OUTPUT_SIZE).Finalize(output.data());
+        CRIPEMD160().Write(buf, SHA3_256::OUTPUT_SIZE).Finalize(output.data());
     }
 
     CHash160& Write(Span<const unsigned char> input) {
-        sha.Write(input.data(), input.size());
+        sha.Write(input);
         return *this;
     }
 
@@ -100,7 +99,7 @@ inline uint160 Hash160(const T1& in1)
 class CHashWriter
 {
 private:
-    CSHA256 ctx;
+    SHA3_256 ctx;
 
     const int nType;
     const int nVersion;
@@ -112,27 +111,16 @@ public:
     int GetVersion() const { return nVersion; }
 
     void write(const char *pch, size_t size) {
-        ctx.Write((const unsigned char*)pch, size);
+        ctx.Write(Span<const unsigned char>((const unsigned char*)pch, size));
     }
 
-    /** Compute the double-SHA256 hash of all data written to this object.
+    /** Compute the SHA3 hash of all data written to this object.
      *
      * Invalidates this object.
      */
     uint256 GetHash() {
         uint256 result;
-        ctx.Finalize(result.begin());
-        ctx.Reset().Write(result.begin(), CSHA256::OUTPUT_SIZE).Finalize(result.begin());
-        return result;
-    }
-
-    /** Compute the SHA256 hash of all data written to this object.
-     *
-     * Invalidates this object.
-     */
-    uint256 GetSHA256() {
-        uint256 result;
-        ctx.Finalize(result.begin());
+        ctx.Finalize(result);
         return result;
     }
 
@@ -197,7 +185,7 @@ uint256 SerializeHash(const T& obj, int nType=SER_GETHASH, int nVersion=PROTOCOL
 }
 
 /** Single-SHA256 a 32-byte input (represented as uint256). */
-NODISCARD uint256 SHA256Uint256(const uint256& input);
+NODISCARD uint256 SHA3Uint256(const uint256& input);
 
 unsigned int MurmurHash3(unsigned int nHashSeed, Span<const unsigned char> vDataToHash);
 

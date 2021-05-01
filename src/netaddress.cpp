@@ -6,10 +6,11 @@
 #include <netaddress.h>
 
 #include <crypto/common.h>
+#include <crypto/sha256.h>
 #include <crypto/sha3.h>
-#include <hash.h>
 #include <prevector.h>
 #include <tinyformat.h>
+#include <uint256.h>
 #include <util/asmap.h>
 #include <util/strencodings.h>
 #include <util/string.h>
@@ -778,7 +779,9 @@ std::vector<unsigned char> CNetAddr::GetAddrBytes() const
 
 uint64_t CNetAddr::GetHash() const
 {
-    uint256 hash = Hash(m_addr);
+    std::vector<unsigned char> bytes = GetAddrBytes();
+    unsigned char hash[CSHA256::OUTPUT_SIZE];
+    CSHA256().Write((const unsigned char*)&bytes, bytes.size()).Finalize(hash);
     uint64_t nRet;
     memcpy(&nRet, &hash, sizeof(nRet));
     return nRet;

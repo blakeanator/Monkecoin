@@ -5,7 +5,7 @@
 
 #include <script/standard.h>
 
-#include <crypto/sha256.h>
+#include <hash.h>
 #include <pubkey.h>
 #include <script/script.h>
 
@@ -40,7 +40,7 @@ CKeyID ToKeyID(const WitnessV0KeyHash& key_hash)
 
 WitnessV0ScriptHash::WitnessV0ScriptHash(const CScript& in)
 {
-    CSHA256().Write(in.data(), in.size()).Finalize(begin());
+    CHash256().Write(in).Finalize(m_hash);
 }
 
 std::string GetTxnOutputType(TxoutType t)

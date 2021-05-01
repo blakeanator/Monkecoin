@@ -290,7 +290,7 @@ public:
         } else if (wm == WitnessMode::SH) {
             witscript = scriptPubKey;
             uint256 hash;
-            CSHA256().Write(&witscript[0], witscript.size()).Finalize(hash.begin());
+            CHash256().Write(witscript).Finalize(hash);
             scriptPubKey = CScript() << witnessversion << ToByteVector(hash);
         }
         if (P2SH) {
@@ -774,7 +774,7 @@ BOOST_AUTO_TEST_CASE(script_build)
     {
         CScript witscript = CScript() << ToByteVector(keys.pubkey0);
         uint256 hash;
-        CSHA256().Write(&witscript[0], witscript.size()).Finalize(hash.begin());
+        CHash256().Write(witscript).Finalize(hash);
         std::vector<unsigned char> hashBytes = ToByteVector(hash);
         hashBytes.pop_back();
         tests.push_back(TestBuilder(CScript() << OP_0 << hashBytes,

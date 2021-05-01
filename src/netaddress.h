@@ -88,7 +88,7 @@ static const std::array<uint8_t, 6> TORV2_IN_IPV6_PREFIX{
 /// Such dummy IPv6 addresses are guaranteed to not be publicly routable as they
 /// fall under RFC4193's fc00::/7 subnet allocated to unique-local addresses.
 static const std::array<uint8_t, 6> INTERNAL_IN_IPV6_PREFIX{
-    0xFD, 0x6B, 0x88, 0xC0, 0x87, 0x24 // 0xFD + sha256("monkecoin")[0:5].
+    0xFD, 0xb4, 0x79, 0x5f, 0xb0, 0x1b // 0xFD + sha256("monkecoin")[0:5].
 };
 
 /// Size of IPv4 address (in bytes).

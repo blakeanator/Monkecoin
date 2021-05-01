@@ -1046,6 +1046,7 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                 case OP_RIPEMD160:
                 case OP_SHA1:
                 case OP_SHA256:
+                case OP_SHA3:
                 case OP_HASH160:
                 case OP_HASH256:
                 {
@@ -1060,6 +1061,8 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                         CSHA1().Write(vch.data(), vch.size()).Finalize(vchHash.data());
                     else if (opcode == OP_SHA256)
                         CSHA256().Write(vch.data(), vch.size()).Finalize(vchHash.data());
+                    else if (opcode == OP_SHA3)
+                        SHA3_256().Write(vch).Finalize(vchHash);
                     else if (opcode == OP_HASH160)
                         CHash160().Write(vch).Finalize(vchHash);
                     else if (opcode == OP_HASH256)
@@ -1860,14 +1863,14 @@ static bool VerifyWitnessProgram(const CScriptWitness& witness, int witversion, 
 
     if (witversion == 0) {
         if (program.size() == WITNESS_V0_SCRIPTHASH_SIZE) {
-            // BIP141 P2WSH: 32-byte witness v0 program (which encodes SHA256(script))
+            // BIP141 P2WSH: 32-byte witness v0 program (which encodes SHA3(script))
             if (stack.size() == 0) {
                 return set_error(serror, SCRIPT_ERR_WITNESS_PROGRAM_WITNESS_EMPTY);
             }
             const valtype& script_bytes = SpanPopBack(stack);
             exec_script = CScript(script_bytes.begin(), script_bytes.end());
             uint256 hash_exec_script;
-            SHA3_256().Write(exec_script).Finalize(hash_exec_script);
+            CHash256().Write(exec_script).Finalize(hash_exec_script);
             if (memcmp(hash_exec_script.begin(), program.data(), 32)) {
                 return set_error(serror, SCRIPT_ERR_WITNESS_PROGRAM_MISMATCH);
             }

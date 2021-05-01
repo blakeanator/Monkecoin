@@ -2174,7 +2174,8 @@ uint256 DescriptorScriptPubKeyMan::GetID() const
     LOCK(cs_desc_man);
     std::string desc_str = m_wallet_descriptor.descriptor->ToString();
     uint256 id;
-    CSHA256().Write((unsigned char*)desc_str.data(), desc_str.size()).Finalize(id.begin());
+    //CSHA256().Write((unsigned char*)desc_str.data(), desc_str.size()).Finalize(id.begin());
+    CHash256().Write(MakeUCharSpan(desc_str)).Finalize(id);
     return id;
 }
 

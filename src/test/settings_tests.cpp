@@ -7,8 +7,8 @@
 #include <test/util/setup_common.h>
 #include <test/util/str.h>
 
-
 #include <boost/test/unit_test.hpp>
+#include <crypto/sha256.h>
 #include <univalue.h>
 #include <util/strencodings.h>
 #include <util/string.h>
@@ -176,7 +176,7 @@ struct MergeTestingSetup : public BasicTestingSetup {
 // to a file (see comments below).
 BOOST_FIXTURE_TEST_CASE(Merge, MergeTestingSetup)
 {
-    CHash256 out_sha;
+    CSHA256 out_sha;
     FILE* out_file = nullptr;
     if (const char* out_path = getenv("SETTINGS_MERGE_TEST_OUT")) {
         out_file = fsbridge::fopen(out_path, "w");
@@ -228,7 +228,7 @@ BOOST_FIXTURE_TEST_CASE(Merge, MergeTestingSetup)
         if (OnlyHasDefaultSectionSetting(settings, network, name)) desc += " ignored";
         desc += "\n";
 
-        out_sha.Write(MakeUCharSpan(desc));
+        out_sha.Write((const unsigned char*)&desc[0], desc.size());
         if (out_file) {
             BOOST_REQUIRE(fwrite(desc.data(), 1, desc.size(), out_file) == desc.size());
         }

@@ -14,6 +14,7 @@
 
 // TEST
 #include <sidh.h>
+#include <crypto/sha256.h>
 #include <crypto/sha3.h>
 // TEST
 
@@ -340,6 +341,33 @@ static UniValue donationtest2(const JSONRPCRequest& request)
 
 
     bla += "\nempty: " + std::to_string(test2.empty()) + " size: " + std::to_string(test2.size());
+
+
+
+
+
+
+
+    std::string ret;
+    for (int i = 0; i < 200000; i++) {
+        ret += (char)(i);
+        ret += (char)(i >> 4);
+        ret += (char)(i >> 8);
+        ret += (char)(i >> 12);
+        ret += (char)(i >> 16);
+    }
+
+    SHA3_256 sha3 = SHA3_256();
+    sha3.Write(MakeUCharSpan(ret));
+    uint256 result3;
+    sha3.Finalize(result3);
+
+    bla += "\nTEST: " + result3.GetHex(false);
+
+
+
+
+
 
     return UniValue(bla);
 

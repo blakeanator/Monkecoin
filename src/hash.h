@@ -9,7 +9,6 @@
 #include <attributes.h>
 #include <crypto/common.h>
 #include <crypto/ripemd160.h>
-#include <crypto/sha256.h>
 #include <crypto/sha3.h>
 #include <prevector.h>
 #include <serialize.h>
@@ -184,7 +183,7 @@ uint256 SerializeHash(const T& obj, int nType=SER_GETHASH, int nVersion=PROTOCOL
     return ss.GetHash();
 }
 
-/** Single-SHA256 a 32-byte input (represented as uint256). */
+/** SHA3 a 32-byte input (represented as uint256). */
 NODISCARD uint256 SHA3Uint256(const uint256& input);
 
 unsigned int MurmurHash3(unsigned int nHashSeed, Span<const unsigned char> vDataToHash);
@@ -193,9 +192,9 @@ void BIP32Hash(const ChainCode &chainCode, unsigned int nChild, unsigned char he
 
 /** Return a CHashWriter primed for tagged hashes (as specified in BIP 340).
  *
- * The returned object will have SHA256(tag) written to it twice (= 64 bytes).
+ * The returned object will have SHA3(tag) written to it twice (= 64 bytes).
  * A tagged hash can be computed by feeding the message into this object, and
- * then calling CHashWriter::GetSHA256().
+ * then calling CHashWriter::GetSHA3().
  */
 CHashWriter TaggedHash(const std::string& tag);
 

@@ -12,7 +12,7 @@
 #include <banman.h>
 #include <clientversion.h>
 #include <consensus/consensus.h>
-#include <crypto/sha256.h>
+//#include <crypto/sha256.h>
 #include <net_permissions.h>
 #include <netbase.h>
 #include <node/ui_interface.h>
@@ -103,9 +103,9 @@ static const uint64_t SELECT_TIMEOUT_MILLISECONDS = 50;
 
 const std::string NET_MESSAGE_COMMAND_OTHER = "*other*";
 
-static const uint64_t RANDOMIZER_ID_NETGROUP = 0x6c0edd8036ef4036ULL; // SHA256("netgroup")[0:8]
-static const uint64_t RANDOMIZER_ID_LOCALHOSTNONCE = 0xd93e69e2bbfa5735ULL; // SHA256("localhostnonce")[0:8]
-static const uint64_t RANDOMIZER_ID_ADDRCACHE = 0x1cf2e4ddd306dda9ULL; // SHA256("addrcache")[0:8]
+static const uint64_t RANDOMIZER_ID_NETGROUP = 0xabb2b5f9a692e3aaULL; // SHA3("netgroup")[0:8]
+static const uint64_t RANDOMIZER_ID_LOCALHOSTNONCE = 0xe42e8de9f9a5d4d6ULL; // SHA3("localhostnonce")[0:8]
+static const uint64_t RANDOMIZER_ID_ADDRCACHE = 0x6e26b8e4d572cee5ULL; // SHA3("addrcache")[0:8]
 //
 // Global state variables
 //
@@ -789,7 +789,7 @@ Optional<CNetMessage> V1TransportDeserializer::GetMessage(const std::chrono::mic
 }
 
 void V1TransportSerializer::prepareForTransport(CSerializedNetMsg& msg, std::vector<unsigned char>& header) {
-    // create dbl-sha256 checksum
+    // create sha3 checksum
     uint256 hash = Hash(msg.data);
 
     // create header

@@ -86,7 +86,7 @@ static void CHACHA20_POLY1305_AEAD_1MB_ENCRYPT_DECRYPT(benchmark::Bench& bench)
     CHACHA20_POLY1305_AEAD(bench, BUFFER_SIZE_LARGE, true);
 }
 
-// Add Hash() (dbl-sha256) bench for comparison
+// Add Hash() (sha3) bench for comparison
 
 static void HASH(benchmark::Bench& bench, size_t buffersize)
 {

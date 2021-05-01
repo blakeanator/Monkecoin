@@ -17,6 +17,7 @@
 #include <chainparams.h>
 #include <compat/sanity.h>
 #include <consensus/validation.h>
+#include <crypto/sha256.h>
 #include <fs.h>
 #include <hash.h>
 #include <httprpc.h>

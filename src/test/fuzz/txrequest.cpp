@@ -3,8 +3,8 @@
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
 #include <crypto/common.h>
-#include <crypto/sha256.h>
 #include <crypto/siphash.h>
+#include <hash.h>
 #include <primitives/transaction.h>
 #include <test/fuzz/fuzz.h>
 #include <txrequest.h>
@@ -30,7 +30,8 @@ struct Initializer
     Initializer()
     {
         for (uint8_t txhash = 0; txhash < MAX_TXHASHES; txhash += 1) {
-            CSHA256().Write(&txhash, 1).Finalize(TXHASHES[txhash].begin());
+            //CSHA256().Write(&txhash, 1).Finalize(TXHASHES[txhash].begin());
+            CHash256().Write(txhash).Finalize(TXHASHES[txhash]);
         }
         int i = 0;
         // DELAYS[N] for N=0..15 is just N microseconds.

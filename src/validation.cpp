@@ -1608,7 +1608,7 @@ int GetSpendHeight(const CCoinsViewCache& inputs)
 
 
 static CuckooCache::cache<uint256, SignatureCacheHasher> g_scriptExecutionCache;
-static CSHA256 g_scriptExecutionCacheHasher;
+static SHA3_256 g_scriptExecutionCacheHasher;
 
 void InitScriptExecutionCache() {
     // Setup the salted hasher
@@ -1616,8 +1616,8 @@ void InitScriptExecutionCache() {
     // We want the nonce to be 64 bytes long to force the hasher to process
     // this chunk, which makes later hash computations more efficient. We
     // just write our 32-byte entropy twice to fill the 64 bytes.
-    g_scriptExecutionCacheHasher.Write(nonce.begin(), 32);
-    g_scriptExecutionCacheHasher.Write(nonce.begin(), 32);
+    g_scriptExecutionCacheHasher.Write(nonce);
+    g_scriptExecutionCacheHasher.Write(nonce);
     // nMaxCacheSize is unsigned. If -maxsigcachesize is set to zero,
     // setup_bytes creates the minimum possible cache (2 elements).
     size_t nMaxCacheSize = std::min(std::max((int64_t)0, gArgs.GetArg("-maxsigcachesize", DEFAULT_MAX_SIG_CACHE_SIZE) / 2), MAX_MAX_SIG_CACHE_SIZE) * ((size_t) 1 << 20);
@@ -1659,8 +1659,9 @@ bool CheckInputScripts(const CTransaction& tx, TxValidationState &state, const C
     // properly commits to the scriptPubKey in the inputs view of that
     // transaction).
     uint256 hashCacheEntry;
-    CSHA256 hasher = g_scriptExecutionCacheHasher;
-    hasher.Write(tx.GetWitnessHash().begin(), 32).Write((unsigned char*)&flags, sizeof(flags)).Finalize(hashCacheEntry.begin());
+    SHA3_256 hasher = g_scriptExecutionCacheHasher;
+    //hasher.Write(tx.GetWitnessHash().begin(), 32).Write((unsigned char*)&flags, sizeof(flags)).Finalize(hashCacheEntry.begin());
+    hasher.Write(tx.GetWitnessHash()).Write(Span<unsigned char>((unsigned char*)&flags, sizeof(flags))).Finalize(hashCacheEntry);
     AssertLockHeld(cs_main); //TODO: Remove this requirement by making CuckooCache not require external locks
     if (g_scriptExecutionCache.contains(hashCacheEntry, !cacheFullScriptStore)) {
         return true;
@@ -3698,7 +3699,7 @@ static bool ContextualCheckBlock(const CBlock& block, BlockValidationState& stat
     // * The coinbase scriptWitness is a stack of a single 32-byte vector, containing a witness reserved value (unconstrained).
     // * We build a merkle tree with all those witness hashes as leaves (similar to the hashMerkleRoot in the block header).
     // * There must be at least one output whose scriptPubKey is a single 36-byte push, the first 4 bytes of which are
-    //   {0xaa, 0x21, 0xa9, 0xed}, and the following 32 bytes are SHA256^2(witness root, witness reserved value). In case there are
+    //   {0xaa, 0x21, 0xa9, 0xed}, and the following 32 bytes are SHA3^2(witness root, witness reserved value). In case there are
     //   multiple, the last one is used.
     bool fHaveWitness = false;
     if (nHeight >= consensusParams.SegwitHeight) {

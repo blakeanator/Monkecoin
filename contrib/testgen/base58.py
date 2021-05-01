@@ -10,7 +10,7 @@ import hashlib
 
 # for compatibility with following code...
 class SHA256:
-    new = hashlib.sha256
+    new = hashlib.sha3_256
 
 if str != bytes:
     # Python 3.x
@@ -81,7 +81,7 @@ def b58decode(v, length = None):
 
 def checksum(v):
     """Return 32-bit checksum based on SHA256"""
-    return SHA256.new(SHA256.new(v).digest()).digest()[0:4]
+    return SHA256.new(v).digest()[0:4]
 
 def b58encode_chk(v):
     """b58encode a string, with 32-bit checksum"""

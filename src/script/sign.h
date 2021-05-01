@@ -69,7 +69,7 @@ struct SignatureData {
     std::vector<CKeyID> missing_pubkeys; ///< KeyIDs of pubkeys which could not be found
     std::vector<CKeyID> missing_sigs; ///< KeyIDs of pubkeys for signatures which could not be found
     uint160 missing_redeem_script; ///< ScriptID of the missing redeemScript (if any)
-    uint256 missing_witness_script; ///< SHA256 of the missing witnessScript (if any)
+    uint256 missing_witness_script; ///< SHA3 of the missing witnessScript (if any)
 
     SignatureData() {}
     explicit SignatureData(const CScript& script) : scriptSig(script) {}

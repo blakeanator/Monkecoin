@@ -1771,7 +1771,7 @@ static RPCHelpMan analyzepsbt()
                                     {RPCResult::Type::STR_HEX, "keyid", "Public key ID, hash160 of the public key, of a public key whose signature is missing"},
                                 }},
                                 {RPCResult::Type::STR_HEX, "redeemscript", /* optional */ true, "Hash160 of the redeemScript that is missing"},
-                                {RPCResult::Type::STR_HEX, "witnessscript", /* optional */ true, "SHA256 of the witnessScript that is missing"},
+                                {RPCResult::Type::STR_HEX, "witnessscript", /* optional */ true, "SHA3 of the witnessScript that is missing"},
                             }},
                             {RPCResult::Type::STR, "next", /* optional */ true, "Role of the next person that this input needs to go to"},
                         }},

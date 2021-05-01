@@ -6,8 +6,8 @@
 #include <consensus/consensus.h>
 #include <consensus/validation.h>
 #include <chainparams.h>
-#include <crypto/sha256.h>
 #include <crypto/siphash.h>
+#include <hash.h>
 #include <random.h>
 #include <streams.h>
 #include <txmempool.h>
@@ -31,10 +31,8 @@ CBlockHeaderAndShortTxIDs::CBlockHeaderAndShortTxIDs(const CBlock& block, bool f
 void CBlockHeaderAndShortTxIDs::FillShortTxIDSelector() const {
     CDataStream stream(SER_NETWORK, PROTOCOL_VERSION);
     stream << header << nonce;
-    CSHA256 hasher;
-    hasher.Write((unsigned char*)&(*stream.begin()), stream.end() - stream.begin());
     uint256 shorttxidhash;
-    hasher.Finalize(shorttxidhash.begin());
+    CHash256().Write(Span<const unsigned char>((const unsigned char*)&(*stream.begin()), stream.end() - stream.begin())).Finalize(shorttxidhash);
     shorttxidk0 = shorttxidhash.GetUint64(0);
     shorttxidk1 = shorttxidhash.GetUint64(1);
 }
@@ -43,8 +41,6 @@ uint64_t CBlockHeaderAndShortTxIDs::GetShortID(const uint256& txhash) const {
     static_assert(SHORTTXIDS_LENGTH == 6, "shorttxids calculation assumes 6-byte shorttxids");
     return SipHashUint256(shorttxidk0, shorttxidk1, txhash) & 0xffffffffffffL;
 }
-
-
 
 ReadStatus PartiallyDownloadedBlock::InitData(const CBlockHeaderAndShortTxIDs& cmpctblock, const std::vector<std::pair<uint256, CTransactionRef>>& extra_txn) {
     if (cmpctblock.header.IsNull() || (cmpctblock.shorttxids.empty() && cmpctblock.prefilledtxn.empty()))

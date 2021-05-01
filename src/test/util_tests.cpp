@@ -5,7 +5,7 @@
 #include <util/system.h>
 
 #include <clientversion.h>
-#include <hash.h> // For Hash()
+#include <crypto/sha256.h>
 #include <key.h>  // For CKey
 #include <optional.h>
 #include <sync.h>
@@ -914,7 +914,7 @@ struct ArgsMergeTestingSetup : public BasicTestingSetup {
 // to a file (see comments below).
 BOOST_FIXTURE_TEST_CASE(util_ArgsMerge, ArgsMergeTestingSetup)
 {
-    CHash256 out_sha;
+    CSHA256 out_sha;
     FILE* out_file = nullptr;
     if (const char* out_path = getenv("ARGS_MERGE_TEST_OUT")) {
         out_file = fsbridge::fopen(out_path, "w");
@@ -1001,7 +1001,7 @@ BOOST_FIXTURE_TEST_CASE(util_ArgsMerge, ArgsMergeTestingSetup)
 
         desc += "\n";
 
-        out_sha.Write(MakeUCharSpan(desc));
+        out_sha.Write((const unsigned char*)&desc[0], desc.size());
         if (out_file) {
             BOOST_REQUIRE(fwrite(desc.data(), 1, desc.size(), out_file) == desc.size());
         }
@@ -1049,7 +1049,7 @@ struct ChainMergeTestingSetup : public BasicTestingSetup {
 
 BOOST_FIXTURE_TEST_CASE(util_ChainMerge, ChainMergeTestingSetup)
 {
-    CHash256 out_sha;
+    CSHA256 out_sha;
     FILE* out_file = nullptr;
     if (const char* out_path = getenv("CHAIN_MERGE_TEST_OUT")) {
         out_file = fsbridge::fopen(out_path, "w");
@@ -1104,7 +1104,7 @@ BOOST_FIXTURE_TEST_CASE(util_ChainMerge, ChainMergeTestingSetup)
         }
         desc += "\n";
 
-        out_sha.Write(MakeUCharSpan(desc));
+        out_sha.Write((const unsigned char*)&desc[0], desc.size());
         if (out_file) {
             BOOST_REQUIRE(fwrite(desc.data(), 1, desc.size(), out_file) == desc.size());
         }

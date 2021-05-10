@@ -83,14 +83,11 @@ Now, you can either build from self-compiled [depends](/depends/README.md) or in
 
     sudo apt-get install libevent-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev
 
-BerkeleyDB is required for the wallet.
+BerkeleyDB is required for the wallet:
 
-Ubuntu and Debian have their own `libdb-dev` and `libdb++-dev` packages, but these will install
-BerkeleyDB 5.1 or later. This will break binary wallet compatibility with the distributed executables, which
-are based on BerkeleyDB 5.3. If you do not care about wallet compatibility,
-pass `--with-incompatible-bdb` to configure.
+    sudo apt-get install libdb5.3++-dev
 
-Otherwise, you can build from self-compiled `depends` (see above).
+If you do not care about wallet compatibility, pass `--with-incompatible-bdb` to configure. Otherwise, you can build from self-compiled `depends` (see above).
 
 SQLite is required for the wallet:
 

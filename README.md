@@ -1,4 +1,4 @@
-Bitcoin Core integration/staging tree
+Monkecoin master tree
 =====================================
 
 https://monkecoin.org

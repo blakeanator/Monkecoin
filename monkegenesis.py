@@ -69,6 +69,10 @@ def main():
   print("--------------------------------------------------------------------------")
   print("Genesis hash found in " + convert_seconds_to_text(elapsed_time))
 
+  if options.dump == 1:
+    print("--------------------------------------------------------------------------")
+    print("Block Header Dump: " + codecs.encode(bytes(data_block), 'hex').decode('ascii'))
+
   for proc in processes:
     proc.terminate()
 
@@ -87,6 +91,8 @@ def get_args():
                    type="int", help="the value in coins for the output, full value (monkecoin: 3200000000)")
   parser.add_option("-b", "--bits", dest="bits", default=0x1d00ffff,
                    type="int", help="the target in compact representation, associated to a difficulty of 1")
+  parser.add_option("-d", "--dump", dest="dump", default=0,
+                   type="int", help="whether to print out the block binary")
 
   (options, args) = parser.parse_args()
   return options

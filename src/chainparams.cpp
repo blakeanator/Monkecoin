@@ -118,6 +118,11 @@ public:
         m_assumed_chain_state_size = 0;
 
         genesis = CreateGenesisBlock(1619335278, 3271649591, 0x1d00ffff, 1, 0 * COIN);
+        CBlockHeader header = genesis.GetBlockHeader();
+        printf("Block header dump: %s\n", HexStr(Span<unsigned char>((unsigned char*)&header, sizeof(header))).c_str());
+        printf("Block header size: %lu\n", sizeof(header));
+        printf("Block class size: %lu\n", sizeof(CBlockHeader));
+
         consensus.hashGenesisBlock = genesis.GetHash();
         assert(consensus.hashGenesisBlock == uint256S("0x000000006b2ff8357a869c85dc9c740af63d1942d1d910d0886a210c25e8c455"));
         assert(genesis.hashMerkleRoot == uint256S("0x12c5982220b71940d93396dd3751bff0cca35c5a8cd1e8d1f65b1a7bb9598cef"));
